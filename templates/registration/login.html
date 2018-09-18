@@ -1,0 +1,17 @@
+{% extends '../homepage.html' %}
+{% block contentmain%}
+
+    {% block title %}<h2>Login</h2>{% endblock %}
+
+    {% if user.is_authenticated %}
+        Hi {{ user.username }}!
+    {% else %}
+        <p>You are not logged in</p>
+
+<form method="post">
+  {% csrf_token %}
+  {{ form.as_p }}
+  <button type="submit">Login</button>
+</form>
+    {% endif %}
+{% endblock %}
