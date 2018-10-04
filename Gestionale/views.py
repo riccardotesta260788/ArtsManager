@@ -25,7 +25,7 @@ def handler500(request):
 
 @login_required
 def export_data_autori(request):
-    entry=Opera.objects.all()
+    entry=Autore.objects.all()
     return render(request, 'mainautori.html', context={"export_record":entry, "elementi":entry.count()})
 
 @login_required
@@ -43,4 +43,19 @@ def opera_full(request):
     idval=request.GET['id']
     entry = Opera.objects.all().filter(id=idval)
     return render(request, 'opera_completa.html', context={"id":id,"entry":entry[0]})
+
+@login_required
+def backup(request):
+    import os
+    files=[]
+
+    import os, fnmatch
+
+    listOfFiles = os.listdir('../../../../backup')
+    pattern = "*.dump"
+    for entry in listOfFiles:
+        if fnmatch.fnmatch(entry, pattern):
+            print(entry)
+
+    return render(request, 'listBackup.html', context={"files":files})
 

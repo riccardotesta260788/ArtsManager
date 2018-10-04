@@ -15,6 +15,7 @@ urlpatterns = [
     url(r'^exportopere/', mainview.export_data_opere , name='exportopere'),
     url(r'^exportimmagini/', mainview.export_data_immagini , name='exportimmagini'),
     url(r'^operacompleta/$', mainview.opera_full , name='exportimmagini'),
+    url(r'^backup/$', mainview.backup , name='backup'),
 
 ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 

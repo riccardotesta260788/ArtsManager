@@ -1,35 +1,42 @@
 {% extends 'homepage.html' %}
 {% block contentmain %}
-    <h2>Elenco Autori</h2>
+    <h2>Elenco Opere</h2>
+    <p>La presente vista di consultazione permette di visualizzare i contenuti inseriti ed eventualmente stamparli.</p>
     <p>Voci trovate nel database:{{ elementi }}</p>
 
     <table id="recordtable" class="display" style="width:100%">
-        <thead>
-        <tr>
+         <thead>
+        <tr style="font-size: 0.8em">
             <th></th>
             <th>Autore</th>
-            <th>Dati</th>
-            <th>Residenza</th>
-            <th>Contatti</th>
-
+            <th>Titolo opera</th>
+            <th>Descrizione</th>
+            <th>Stampa <small>(mm)</small></th>
+            <th>Anno</th>
+            <th>Commento</th>
+            <th>TAG</th>
+            <th>Data caricamneto</th>
         </tr>
         </thead>
 
         {% for entr in export_record %}
-            <tr>
+            <tr style="font-size: 0.7em">
 
-                <td><img src="/media/{{ entr.autore.imagefile }}" style="max-width:80px;height:auto"></td>
-                <td>{{ entr.autore.titolo }} {{ entr.autore.nome }} {{ entr.autore.cognome }}</td>
-                <td><i class="icofont-calendar"></i> {{ entr.autore.nascita }}
-                    <br><i class="icofont-court"></i> {{ entr.autore.luogo_nascita }} {{ entr.autore.stato_nascita }}
-                    <br><i class="icofont-{{ entr.autore.genere }}"></i> {{ entr.autore.genere }}</td>
+                <td><a href="/media/{{ entr.immagini.imagefile}}"><img src="/media/{{ entr.immagini.imagefile}}" style="max-width:80px;height:auto"></a><small>clicca per ingrandire</small></td>
+                <td>{{ entr.autore.titolo }} {{ entr.autore.nome }} {{ entr.autore.cognome }}<br>
+                    Stato: {{ entr.nazione }}</td>
+                <td><strong>{{ entr.immagini.titolo_opera }}</strong><hr>Riconoscimenti: {{ entr.riconoscimenti }}</td>
+                <td>{{ entr.descrizione }}</td>
+                <td>Lastra: {{ entr.dimensione_lastra_x }} X {{ entr.dimensione_lastra_x }}<br>
+                Foglio: {{ entr.dimensione_foglio_x }} X {{ entr.dimensione_foglio_x }}<br>
+                Numero lastre: {{ entr.numero_lastre }}<br>
+                Tecnica: {{ entr.tecnica }}</td>
+                 <td>{{ entr.anno_realizzazione }}</td>
+                <td>{{ entr.commento_opera }}</td>
+                <td>{{ entr.tag }}</td>
+             <td> {{ entr.immagini.datestamp}}</td>
+                <td> <a href="/operacompleta?id={{ entr.id}}"><button type="button" class="btn btn-primary">Stampa completa</button></a></td>
 
-                <td>
-                    <i class="icofont-address-book"></i> {{ entr.autore.indirizzo }} {{ entr.autore.citta }} {{ entr.autore.stato_provincia }}
-                    <br><i class="icofont-location-pin"></i> {{ entr.autore.stato }} - {{ entr.autore.zip }}</td>
-                <td><i class="icofont-phone"></i> {{ entr.autore.telefono }}
-                     <br><i class="icofont-ui-email"></i> {{ entr.autore.mail }}
-                    <br><i class="icofont-flag"></i> Lingua: {{ entr.autore.lingua }}</td>
             </tr>
 
         {% endfor %}

@@ -20,12 +20,13 @@ from django.contrib.auth import views as auth_views
 from Gestionale import views as gview
 
 
+
 urlpatterns = [
     url(r'admin/', admin.site.urls),
     url(r'accounts/', include('django.contrib.auth.urls')),
     url(r'^', include('Gestionale.urls')),
-
-
+    url(r'^jet/', include('jet.urls', 'jet')),  # Django JET URLS
+    url(r'^jet/dashboard/', include('jet.dashboard.urls', 'jet-dashboard')),  # Django JET dashboard URLS
 ]
 
 

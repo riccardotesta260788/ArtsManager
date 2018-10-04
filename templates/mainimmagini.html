@@ -1,6 +1,6 @@
 {% extends 'homepage.html' %}
 {% block contentmain %}
-    <h2>Elenco Autori</h2>
+    <h2>Elenco Immagini</h2>
     <p>Voci trovate nel database:{{ elementi }}</p>
 
     <table id="recordtable" class="display" style="width:100%">
@@ -8,31 +8,28 @@
         <tr>
             <th></th>
             <th>Autore</th>
-            <th>Dati</th>
-            <th>Residenza</th>
-            <th>Contatti</th>
-
+            <th>Stato</th>
+            <th>Titolo opera</th>
+            <th>Commento</th>
+            <th>Image meta</th>
+            <th>Data caricamneto</th>
         </tr>
         </thead>
 
         {% for entr in export_record %}
             <tr>
 
-                <td><img src="/media/{{ entr.autore.imagefile }}" style="max-width:80px;height:auto"></td>
+                <td><a href="/media/{{ entr.imagefile}}"><img src="/media/{{ entr.imagefile}}" style="max-width:80px;height:auto"></a></td>
                 <td>{{ entr.autore.titolo }} {{ entr.autore.nome }} {{ entr.autore.cognome }}</td>
-                <td><i class="icofont-calendar"></i> {{ entr.autore.nascita }}
-                    <br><i class="icofont-court"></i> {{ entr.autore.luogo_nascita }} {{ entr.autore.stato_nascita }}
-                    <br><i class="icofont-{{ entr.autore.genere }}"></i> {{ entr.autore.genere }}</td>
-
-                <td>
-                    <i class="icofont-address-book"></i> {{ entr.autore.indirizzo }} {{ entr.autore.citta }} {{ entr.autore.stato_provincia }}
-                    <br><i class="icofont-location-pin"></i> {{ entr.autore.stato }} - {{ entr.autore.zip }}</td>
-                <td><i class="icofont-phone"></i> {{ entr.autore.telefono }}
-                     <br><i class="icofont-ui-email"></i> {{ entr.autore.mail }}
-                    <br><i class="icofont-flag"></i> Lingua: {{ entr.autore.lingua }}</td>
+                <td>{{ entr.autore.stato }}</td>
+                <td>{{ entr.titolo_opera }}</td>
+                <td>{{ entr.commento }}</td>
+            <td> {{ entr.metainfo}}</td>
+             <td> {{ entr.datestamp}}</td>
             </tr>
 
         {% endfor %}
+
     </table>
     <hr>
 <script>

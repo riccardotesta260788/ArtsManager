@@ -1,42 +1,15 @@
 {% extends 'homepage.html' %}
-{% block content %}
-    <h2>Elenco Autori</h2>
-    <p>Voci trovate nel database:{{ elementi }}</p>
-
-    <table id="recordtable" class="display" style="width:100%">
-        <thead>
-        <tr>
-            <th></th>
-            <th>Autore</th>
-            <th>Dati</th>
-            <th>Residenza</th>
-            <th>Contatti</th>
-
-        </tr>
-        </thead>
-
-        {% for entr in export_record %}
-            <tr>
-
-                <td><img src="/media/{{ entr.autore.imagefile }}" style="max-width:80px;height:auto"></td>
-                <td>{{ entr.autore.titolo }} {{ entr.autore.nome }} {{ entr.autore.cognome }}</td>
-                <td><i class="icofont-calendar"></i> {{ entr.autore.nascita }}
-                    <br><i class="icofont-court"></i> {{ entr.autore.luogo_nascita }} {{ entr.autore.stato_nascita }}
-                    <br><i class="icofont-{{ entr.autore.genere }}"></i> {{ entr.autore.genere }}</td>
-
-                <td>
-                    <i class="icofont-address-book"></i> {{ entr.autore.indirizzo }} {{ entr.autore.citta }} {{ entr.autore.stato_provincia }}
-                    <br><i class="icofont-location-pin"></i> {{ entr.autore.stato }} - {{ entr.autore.zip }}</td>
-                <td><i class="icofont-phone"></i> {{ entr.autore.telefono }}
-                     <br><i class="icofont-ui-email"></i> {{ entr.autore.mail }}
-                    <br><i class="icofont-flag"></i> Lingua: {{ entr.autore.lingua }}</td>
-            </tr>
-
-        {% endfor %}
-    </table>
-    <hr>
-<script>
-    $(document).ready(function () {
-        $('#recordtable').DataTable();
-    });</script>
+{% load staticfiles %}
+{% block messaggiologo %}
+    <div class="starter-template">
+        <h1>Biennale Internazionale dell'Incisione<br>Premio Acqui</h1>
+        <p class="lead">Benvenuto<br> Il presente portale è rieservato. L'utilizzo è autorizzato solo alle commissioni
+            del premio.</p>
+        <p><img src="{% static "Gestionale/logo.png" %}" width="150px"></p>
+    </div>
+    <div class="alert alert-success" role="alert">
+  <h4 class="alert-heading">Disclaimer</h4>
+  <p>Il presente portale è riservato ogni accesso o tentativo di accesso è tracciato, per la gestione della privacy in conformità al ai sensi dell’<strong>art.13 del Regolamento europeo (UE) 2016/679</strong><hr>
+  <p class="mb-0"><a href="http://www.privacy-regulation.eu/it/13.htm">Visualizza la normativa</a></p>
+</div>
 {% endblock %}

@@ -1,5 +1,5 @@
 {% extends 'homepage.html' %}
-{% block content %}
+{% block contentmain %}
     <h2>Elenco Autori</h2>
     <p>Voci trovate nel database:{{ elementi }}</p>
 
@@ -18,18 +18,18 @@
         {% for entr in export_record %}
             <tr>
 
-                <td><img src="/media/{{ entr.autore.imagefile }}" style="max-width:80px;height:auto"></td>
-                <td>{{ entr.autore.titolo }} {{ entr.autore.nome }} {{ entr.autore.cognome }}</td>
-                <td><i class="icofont-calendar"></i> {{ entr.autore.nascita }}
-                    <br><i class="icofont-court"></i> {{ entr.autore.luogo_nascita }} {{ entr.autore.stato_nascita }}
-                    <br><i class="icofont-{{ entr.autore.genere }}"></i> {{ entr.autore.genere }}</td>
+                <td><img src="/media/{{ entr.imagefile }}" style="max-width:80px;height:auto"></td>
+                <td>{{ entr.titolo }} {{ entr.nome }} {{ entr.cognome }}</td>
+                <td><i class="icofont-calendar"></i> {{ entr.nascita }}
+                    <br><i class="icofont-court"></i> {{ entr.luogo_nascita }} {{ entr.stato_nascita }}
+                    <br><i class="icofont-{{ entr.genere }}"></i> {{ entr.genere }}</td>
 
                 <td>
-                    <i class="icofont-address-book"></i> {{ entr.autore.indirizzo }} {{ entr.autore.citta }} {{ entr.autore.stato_provincia }}
-                    <br><i class="icofont-location-pin"></i> {{ entr.autore.stato }} - {{ entr.autore.zip }}</td>
-                <td><i class="icofont-phone"></i> {{ entr.autore.telefono }}
-                     <br><i class="icofont-ui-email"></i> {{ entr.autore.mail }}
-                    <br><i class="icofont-flag"></i> Lingua: {{ entr.autore.lingua }}</td>
+                    <i class="icofont-address-book"></i> {{ entr.indirizzo }} {{ entr.citta }} {{ entr.stato_provincia }}
+                    <br><i class="icofont-location-pin"></i> {{ entr.stato }} - {{ entr.zip }}</td>
+                <td><i class="icofont-phone"></i> {{ entr.telefono }}
+                     <br><i class="icofont-ui-email"></i> {{ entr.mail }}
+                    <br><i class="icofont-flag"></i> Lingua: {{ entr.lingua }}</td>
             </tr>
 
         {% endfor %}
