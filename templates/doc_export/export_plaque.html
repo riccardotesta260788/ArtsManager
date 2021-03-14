@@ -1,0 +1,75 @@
+{% extends 'homepage.html' %}
+{% block contentmain %}
+
+    <style>
+        @media print {
+            .print-button {
+                visibility: hidden;
+            }
+
+            .row.impaginazione {
+                max-height: 30% !important;
+            }
+
+            .card {
+                padding: 10px;
+            }
+
+            .rows-print-as-pages .row:nth-child(9n) {
+                page-break-before: always;
+            }
+            .intesta{
+                display: none;
+            }
+        }
+
+
+    </style>
+    <div class="row">
+        <div class="col-md-10 intesta"><h2>Elenco completo schede</h2>
+            <p>Stampa scheder per l'invio.</p></div>
+        <div class="col-md-2">
+            <div class="btn-group-vertical" role="group" aria-label="navigation">
+                <button type="button" class="btn btn-primary print-button btn-" onclick="window.print()"><i
+                        class="icofont-print"></i> Stampa scheda
+                </button>
+
+            </div>
+        </div>
+    </div>
+
+    <div class="container rows-print-as-pages">
+        <div class="row">
+            {% for entry in autori %}
+                <!-- Intestazione -->
+
+                <div class="col-md-6 card-personal card" style="width: 15rem;">
+
+                    <div class="card-body">
+                        <h4 style="text-transform: uppercase">
+                            {{ entry.nome }} {{ entry.cognome }}
+                        </h4>
+                        {{ entry.indirizzo| title }} - {{ entry.citta | title }} ({{ entry.provincia | title }})<br>
+                        {{ entry.stato | title }} - {{ entry.zip_code }}
+                    </div>
+                </div>
+                {% if forloop.counter|divisibleby:2 %}
+
+
+                    </div>
+                    <div class="row">
+                {% endif %}
+
+
+
+
+
+
+
+            {% endfor %}</div>
+    </div>
+
+
+
+
+{% endblock %}

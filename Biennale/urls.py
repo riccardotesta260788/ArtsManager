@@ -13,20 +13,17 @@ Including another URLconf
     1. Import the include() function: from django.conf.urls import url, include
     2. Add a URL to urlpatterns:  url(r'^blog/', include('blog.urls'))
 """
+
 from django.conf.urls import url, include
 from django.contrib import admin
-from django.views.generic import TemplateView
-from django.contrib.auth import views as auth_views
-from Gestionale import views as gview
-
-
 
 urlpatterns = [
     url(r'admin/', admin.site.urls),
     url(r'accounts/', include('django.contrib.auth.urls')),
-    url(r'^', include('Gestionale.urls')),
-    url(r'^jet/', include('jet.urls', 'jet')),  # Django JET URLS
-    url(r'^jet/dashboard/', include('jet.dashboard.urls', 'jet-dashboard')),  # Django JET dashboard URLS
+    url(r'^', include('Gestionale.urls.urls')),
+
+    # url(r'^jet/', include('jet.urls', 'jet')),  # Django JET URLS
+    # url(r'^jet/dashboard/', include('jet.dashboard.urls', 'jet-dashboard')),  # Django JET dashboard URLS
 ]
 
 

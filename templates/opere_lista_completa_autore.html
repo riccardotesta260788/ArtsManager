@@ -1,0 +1,197 @@
+{% extends 'homepage.html' %}
+{% block contentmain %}
+    <style>
+        @media print, screen {
+            .autore {
+                background: lightblue;
+                padding: 2%;
+            }
+
+            h2.opera {
+                background: orange;
+                padding: 2%;
+            }
+
+            .capitalize {
+                text-transform: capitalize;
+            }
+
+            .impaginazione {
+                margin-top: 1%;
+
+            }
+
+            table.impaginazione tr td {
+                padding: 0.5%;
+                background-color: #f1f1f1;
+                page-break-after:always;
+            }
+        }
+        .intestazionepos{
+            background: darkblue;
+            color: white;
+        }
+
+        @media print {
+            .print-button {
+                visibility: hidden;
+            }
+            div#sortable {}
+            .row.impaginazione{
+                max-height: 30%!important;
+            }
+        }
+            .operadiv:nth-child(3n) {
+                page-break-after: always!important;
+            }
+
+
+    </style>
+    <div class="row">
+        <div class="col-md-10"><h2>Elenco completo schede</h2>
+            <p>I dati presenti nella pagina sono stati inseriti conformentente alla attuali normative vigenti in materia
+                di privacy e gestione dei dati personali.</p></div>
+        <div class="col-md-2">
+            <div class="btn-group-vertical" role="group" aria-label="navigation">
+            <button type="button" class="btn btn-primary print-button btn-" onclick="window.print()"><i class="icofont-print"></i> Stampa scheda</button>
+            <button type="button" class="btn btn-primary print-button" onclick="selezionate()"><i class="icofont-bulb-alt"></i> Selezionati</button>
+            <button type="button" class="btn btn-primary print-button" onclick="finale()"><i class="icofont-badge"></i> Finale</button>
+           <button type="button" class="btn btn-primary print-button" onclick="tutte()"><i class="icofont-bullhorn"></i> Mostra tutto</button>
+            </div>
+            <script>
+                function selezionate() {
+                    $('.operadiv').hide()
+                    $('.selezionata').show()
+                }
+                function finale() {
+                    $('.operadiv').hide()
+                    $('.finale').show()
+                }
+                function tutte() {
+                    $('.operadiv').show()
+
+                }
+            </script>
+        </div>
+    </div>
+<hr>
+    <div id="sortable">
+        {% for entry in entries %}
+            <!-- Intestazione -->
+
+
+            <div class="operadiv {% if entry.riconoscimenti == "selezionato, finale" %}
+                                    selezionata finale
+                                    {% elif entry.riconoscimenti == "selezionato" %}
+                                    selezionata
+                                {% endif %}" data-price="{{ entry.posizione_archivio }}" >
+                <h2 class="opera">
+                    <div class="row impaginazione" >
+                        <div class="col-md-4">
+                            <h4 style="text-transform: uppercase"><small>Opera:</small><br>
+                                {{ entry.titolo_opera }}</h4></div>
+                        <div class="col-md-4">
+                            <h4 style="text-transform: uppercase"><small>Autore:</small><br>
+                                {{ entry.autore.cognome }} {{ entry.autore.nome }}
+                            </h4></div>
+                        <div class="col-md-4 intestazionepos">
+
+                            <div class="row ">
+                                <div class="col-md-8">
+                                    <small>Anno</small>
+                                </div>
+                                <div class="col-md-4">
+                                    <small>Pos.</small>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-8">
+                                    <p style="font-size: medium">{{ entry.edizione }}</p>
+                                </div>
+                                <div class="col-md-4">
+                                    {{ entry.posizione_archivio }}
+                                </div>
+
+                            </div>
+
+                        </div>
+                    </div>
+                </h2>
+
+                <div class="row impaginazione row-eq-height">
+
+                    <div class="col-md-3">
+
+                        {% if entry.immagini.preview  %}
+                            <a href="/media/{{ entry.immagini.preview}}"><img src="/media/{{ entry.immagini.preview}}" style="width: 80%"></a>
+
+                        {% else %}
+                            <a href="/media/logo_no_image.png"><img src="/media/logo_no_image.png" style="width: 100%;height:auto"></a>
+
+                        {% endif %}
+                    </div>
+                    <div class="col-md-9">
+                        <table class="impaginazione" style="width: 100%; font-variant: small-caps">
+                            <colgroup>
+                                <col width="30%">
+                                <col width="70%">
+                            </colgroup>
+                            <tr>
+                                <td><i class="icofont-calendar"></i> <strong>Data di nascita:</strong></td>
+                                <td>{% if entry.autore.nascita  %}{{ entry.autore.nascita }}{% endif %}</td>
+                            </tr>
+                        <!--
+                            <tr>
+                                <td><i class="icofont-location-pin"></i> <strong>Stato:</strong></td>
+                                <td> {{ entry.autore.stato }} - {{ entry.autore.zip }}</td>
+                            </tr>
+                            -->
+                            <tr style="background: white">
+                                <td style="background: white"></td>
+                                <td style="background: white"></td>
+                            </tr>
+                            <tr>
+                                <td><strong>Stato</strong></td>
+                                <td style="font-variant: all-small-caps">{{ entry.nazione }}</td>
+                            </tr>
+                            <tr>
+
+                                <td><strong>Riconoscimenti:</strong></td>
+                                <td>{% if entry.riconoscimenti %}
+                                    {{ entry.riconoscimenti }}
+                                {% endif %}</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Dati tecnici opera</strong></td>
+                                <td style="font-variant: all-small-caps">Lastra: {{ entry.dimensione_lastra_y }} X {{ entry.dimensione_lastra_x }}
+                                    Foglio: {{ entry.dimensione_foglio_y }} X {{ entry.dimensione_foglio_x }}</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Tecnica:</strong></td>
+                                <td style="font-variant: all-small-caps">{{ entry.tecnica }}</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Anno realizzazione:</strong></td>
+                                <td style="font-variant: all-small-caps">{{ entry.anno_realizzazione }}</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Anno presentazione:</strong></td>
+                                <td style="font-variant: all-small-caps">{{ entry.edizione }}</td>
+                            </tr>
+                            <!-- <tr>
+                        <td><strong>Descrizione:</strong></td>
+                        <td>{{ entry.note }}</td>
+                    </tr>-->
+                        </table>
+                    </div>
+
+                </div>
+
+                <hr>
+            </div>
+        {% endfor %}
+    </div>
+
+
+
+{% endblock %}

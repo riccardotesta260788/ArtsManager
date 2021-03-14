@@ -1,0 +1,77 @@
+{% extends 'homepage.html' %}
+{% block contentmain %}
+    <h2>Elenco Autori</h2>
+    <p>Voci trovate nel database: {{ elementi }}</p>
+   <p> Statistiche {% include 'statistiche/pie.html' %}</p>
+    <table id="recordtable" class="display" style="width:100%">
+        <thead>
+        <tr>
+            {#            DEBUG: Immagine autore#}
+            {#            <th></th>#}
+            <th></th>
+            <th>Autore</th>
+            <th><i class="icofont-calendar"></i> Data nascita</th>
+            <th><i class="icofont-court"></i> Luogo nascita</th>
+            <th>Residenza</th>
+            <th>Contatti</th>
+        </tr>
+        </thead>
+
+        {% for entr in export_record %}
+            <tr class="align-top">
+                {# DEBUG: Immagine autore#}
+                {#                <td>#}
+                {#                    {% if entr.immagini.imagefile %}#}
+                {#                        <img src="/media/{{ entr.imagefile }}" style="width:90%;height:auto">#}
+                {#                    {% else %}#}
+                {#                        <img src="/media/logo_no_image.png" style="width:90%;height:auto; margin-top:20%">#}
+                {#                    {% endif %}</td>#}
+                <td class="align-center"><i class="icofont-{{ entr.genere }}"
+                                            style="font-size: 2em"></i> {{ entr.titolo }}</td>
+                <td> {{ entr.cognome | capfirst }} {{ entr.nome | capfirst }} </td>
+                {#            Formato data anno-mese-giorno#}
+                <td class="w-auto">{{ entr.nascita | date:'Y-m-d' }}</td>
+                <td>{{ entr.luogo_nascita |lower | capfirst }}<br> {{ entr.stato_nascita | upper }}
+                </td>
+
+                <td>
+                    <i class="icofont-address-book"></i> {{ entr.indirizzo |lower |capfirst }}
+                    <br>{{ entr.citta |lower |capfirst }} {{ entr.stato_provincia |lower |capfirst}}
+                    <br> <i class="icofont-location-pin"></i> {{ entr.stato | upper }} - {{ entr.zip }}
+                </td>
+                <td class="w-auto">
+
+                    {% if entr.telefono != None %}
+                        <p class="alert-info"><i class="icofont-phone"></i> {{ entr.telefono }}</p>
+                    {% else %}
+                        <p class="alert-danger">Telefono</p>
+                    {% endif %}
+                    {% if entr.mail != None %}
+                        <p class="alert-info"><i class="icofont-ui-email"></i> {{ entr.mail | lower}}</p>
+                    {% else %}
+                        <p class="alert-danger">Email</p>
+                    {% endif %}
+                    {% if entr.lingua != None %}
+                        <p class="alert-info"><i class="icofont-speech-comments"></i> {{ entr.lingua }}</p>
+                    {% else %}
+                        <p class="alert-danger">Lingua</p>
+                    {% endif %}
+
+            </tr>
+
+        {% endfor %}
+    </table>
+    <hr>
+
+    <script>
+        {#Filtro per data table visualizzazione record#}
+        $(document).ready(function () {
+            $('#recordtable').DataTable({
+                aLengthMenu: [
+                    [25, 50, 100, 200, -1],
+                    [25, 50, 100, 200, "All"]
+                ],
+                iDisplayLength: -1
+            });
+        });</script>
+{% endblock %}

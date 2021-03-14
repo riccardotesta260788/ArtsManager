@@ -1,0 +1,43 @@
+<li class="nav-item">
+    <a class="nav-link" href="/admin" target="_blank"><i class="icofont-download"></i> Admin</a>
+</li>
+<li class="nav-item">
+    <div class="dropdown">
+        <button class="btn btn-secondary dropdown-toggle" type="button" id="exportDropMenu"
+                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            Elenchi
+        </button>
+        <div class="dropdown-menu" aria-labelledby="exportDropMenu">
+
+            <a class="dropdown-item" href="{% url 'core:exportautori' %}"><i class="icofont-users"></i> Elenco
+                autori</a>
+            <a class="dropdown-item" href="{% url 'core:exportopere' %}"><i class="icofont-picture"></i> Elenco
+                opere</a>
+            <a class="dropdown-item" href="{% url 'core:exportimmagini' %}"><i class="icofont-photobucket"></i> Elenco
+                immagini</a>
+
+        </div>
+    </div>
+
+</li>
+<li class="nav-item">
+    <div class="dropdown">
+        <button class="btn btn-secondary dropdown-toggle" type="button" id="listDropMenu"
+                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            Documenti
+        </button>
+        <div class="dropdown-menu" aria-labelledby="listDropMenu">
+            <a class="dropdown-item" href="{% url 'core:exportilistcompleta' %}"><i class="icofont-attachment"></i> Elenco
+                opere generale</a>
+            <a class="dropdown-item" href="{% url 'core:exportilistcompleta_autori' %}"><i class="icofont-attachment"></i> Elenco
+                opere generale autori</a>
+            <a class="dropdown-item" href="{% url 'core:doc_address' %}"><i class="icofont-attachment"></i> Stampe indirizzi</a>
+            <a class="dropdown-item" href="{% url 'core:doc_alfa' %}"><i class="icofont-attachment"></i> Elenco firme</a>
+        </div>
+    </div>
+
+
+</li>
+<li class="nav-item">
+    <a class="nav-link" href="{% url 'core:utilities' %}"><i class="icofont-fix-tools"></i> Util</a>
+</li>

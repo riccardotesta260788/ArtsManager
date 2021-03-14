@@ -2,124 +2,129 @@
 {% block contentmain %}
     {{ id }}
     <style>
-    @media print,screen {
-        .autore {
-            background: lightblue;
-            padding: 2%;
+        @media print, screen {
+            .autore {
+                background: lightblue;
+                padding: 2%;
+            }
+
+            .opera {
+                background: orange;
+                padding: 2%;
+            }
+
+            .capitalize {
+                text-transform: capitalize;
+            }
+
+            .impaginazione {
+                margin-top: 1%;
+                font-variant:small-caps ;
+
+            }
+
+            table.impaginazione tr td {
+                padding: 0.5%;
+                background-color: #f1f1f1;
+            }
         }
 
-        .opera {
-            background: orange;
-            padding: 2%;
+        @media print {
+            .print-button {
+                visibility: hidden;
+            }
         }
-
-        .capitalize {
-            text-transform: capitalize;
-        }
-
-        .impaginazione {
-            margin-top: 1%;
-
-        }
-        table.impaginazione tr td{
-            padding:0.5%;
-            background-color: #f1f1f1;
-        }
-    }
-    @media print{
-        .print-button{
-            visibility: hidden;
-        }
-    }
     </style>
     <div class="row">
-    <div class="col-md-10"><h2>Scheda tecnica completa autore</h2>
-    <p>I dati presenti nella pagina sono stati inseriti conformentente alla attuali normative vigenti in materia di
-        privacy e gestione dei dati personali.</p></div>
-    <div class="col-md-2"> <button type="button" class="btn btn-primary print-button" onclick="window.print()">Stampa scheda</button>
-</div>
+        <div class="col-md-10"><h2>Scheda tecnica completa autore</h2>
+            <p>I dati presenti nella pagina sono stati inseriti conformentente alla attuali normative vigenti in materia
+                di
+                privacy e gestione dei dati personali.</p></div>
+        <div class="col-md-2">
+            <button type="button" class="btn btn-primary print-button" onclick="window.print()">Stampa scheda</button>
+        </div>
     </div>
 
+    <!-- Intestazione -->
+    <h2 class="opera">
+        <div class="row impaginazione">
+            <div class="col-md-8">
+                <small>Opera:</small>
+                {{ entry.titolo_opera }}<br>
+                <small>Autore:
+                    {{ entry.autore.nome }} {{ entry.autore.cognome }}</small>
+            </div>
+            <div class="col-md-4"><span
+                    style="font-size: medium"> POS:{{ entry.posizione_archivio }} {{ entry.anno_presentazione }} - {{ entry.edizione }}</span>
+                </div>
+        </div>
+    </h2>
 
-   <h2 class="autore"><small>Autore:</small> {{ entry.autore.titolo }} {{ entry.autore.nome }} {{ entry.autore.cognome }}</h2>
+
+
+
     <div class="row impaginazione">
 
-        <div class="col-md-3"><img src="/media/{{ entry.autore.imagefile }}" style="width:100%;"></div>
-        <div class="col-md-9">
+        <div class="col-md-3">
 
+            {% if entry.immagini.imagefile %}
+                <img src="/media/{{ entry.immagini.preview}}" style="width:90%;height:auto">
+            {% else %}
+                <img src="/media/logo_no_image.png" style="width:90%;height:auto; margin-top:20%">
+
+            {% endif %}
+        </div>
+        <div class="col-md-9">
             <table class="impaginazione" width="100%">
+                <colgroup>
+                    <col width="30%">
+                    <col width="70%">
+                </colgroup>
                 <tr>
                     <td><i class="icofont-calendar"></i> <strong>Data di nascita:</strong></td>
                     <td>{{ entry.autore.nascita }}</td>
                 </tr>
-                <tr>
-                    <td><i class="icofont-court"></i> <strong>Luogo di nascita:</strong></td>
-                    <td> {{ entry.autore.luogo_nascita }} , {{ entry.autore.stato_nascita }}</td>
+                 <tr style="background: white">
+<td style="background: white"></td>
+                     <td style="background: white"></td>
                 </tr>
-                <tr>
-                    <td><i class="icofont-{{ entry.autore.genere }}"></i> <strong>Genere:</strong></td>
-                    <td class="capitalize">{{ entry.autore.genere }}</td>
-                </tr>
-
-                <tr>
-                    <td><i class="icofont-address-book"></i> <strong>Recapito:</strong></td>
-                    <td>{{ entry.autore.indirizzo }} {{ entry.autore.citta }} {{ entry.autore.stato_provincia }}</td>
-                </tr>
-                <tr>
-                    <td><i class="icofont-location-pin"></i> <strong>Stato:</strong></td>
-                    <td> {{ entry.autore.stato }} - {{ entry.autore.zip }}</td>
-                </tr>
-                <tr>
-                    <td><strong>Recapiti:</strong></td><td><i class="icofont-phone"></i> {{ entry.autore.telefono }}<br><i
-                            class="icofont-ui-email"></i> {{ entry.autore.mail }}</td>
-                </tr>
-                <tr>
-                    <td><i class="icofont-flag"></i> <strong>Lingua:</strong></td><td> {{ entry.autore.lingua }}</td>
-            </table>
-        </div>
-    </div>
-
-
-<h2 class="opera"><small>Opera:</small> {{ entry.immagini.titolo_opera }}</h2>
-
-    <div class="row impaginazione">
-
-        <div class="col-md-3"><img src="/media/{{ entry.immagini.imagefile}}" style="width:100%"></div>
-        <div class="col-md-9">
-            <table class="impaginazione" width="100%">
                 <tr>
                     <td><strong>Stato</strong></td>
                     <td>{{ entry.nazione }}</td>
                 </tr>
                 <tr>
+
                     <td><strong>Riconoscimenti:</strong></td>
-                    <td>{{ entry.riconoscimenti }}</td>
+                     <td>{% if entry.riconoscimenti %}
+                   {{ entry.riconoscimenti }}
+                    {% endif %}</td>
                 </tr>
-                <tr><td><strong>Dati tecnici opera</strong></td><td>Lastra: {{ entry.dimensione_lastra_x }} X {{ entry.dimensione_lastra_x }}<br>
-                    Foglio: {{ entry.dimensione_foglio_x }} X {{ entry.dimensione_foglio_x }}<br> Numero lastre: {{ entry.numero_lastre }}<br></td></tr>
-                <tr><td><strong>Tecnica:</strong></td><td>{{ entry.tecnica }}</td></tr>
+                <tr>
+                    <td><strong>Dati tecnici opera</strong></td>
+                    <td>Lastra: {{ entry.dimensione_lastra_x }} X {{ entry.dimensione_lastra_y }}
+                        Foglio: {{ entry.dimensione_foglio_x }} X {{ entry.dimensione_foglio_y }}</td>
+                </tr>
+                <tr>
+                    <td><strong>Tecnica:</strong></td>
+                    <td>{{ entry.tecnica }}</td>
+                </tr>
                 <tr>
                     <td><strong>Anno realizzazione:</strong></td>
                     <td>{{ entry.anno_realizzazione }}</td>
                 </tr>
                 <tr>
                     <td><strong>Anno presentazione:</strong></td>
-                    <td>{{ entry.anno_presentazione }}</td>
+                    <td>{{ entry.edizione }}</td>
                 </tr>
                 <tr>
-                    <td><strong>Descrizione - Note:</strong></td>
-                    <td>{{ entry.note }}</td>
+                    <td><strong>Descrizione:</strong></td>
+                    <td >{{ entry.descrizione }}</td>
                 </tr>
-                <tr>
-                    <td><strong>Commento opera:</strong></td>
-                    <td>{{ entry.commento_opera }}</td>
-                </tr>
-                <tr>
-                    <td><strong>TAG:</strong></td>
-                    <td>{{ entry.tag }}</td>
-                </tr>
+
             </table>
         </div>
 
     </div>
+
+
 {% endblock %}

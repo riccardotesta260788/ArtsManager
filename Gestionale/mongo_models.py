@@ -1,7 +1,6 @@
-# coding=utf-8
 """
 Gestionale d'arte
-Il programma permette la gestione delle anagrafiche e delle opere d'arte. Il sistema e' stato creato per la gestione delle
+Il programma permette la gestione delle anagrafiche e delle opere d'arte. Il sistema è stato creato per la gestione delle
 inormazioni e dei dati per le mostre d'arte o per eventi.
 
 1. **Autore** - Anagrafica Autore
@@ -24,48 +23,13 @@ from PIL import Image as Img
 from django.conf import settings
 from django.core.files import temp as tempfile
 from django.core.files.base import File
-from django.utils.encoding import smart_str
-
-MASK="000"
-THUMB_SIZE=(600, 600)
-
-# === Modelli dell'app Gestionale ===
-""" Struttura per gestire le informazioni di angrafica necessarie per la
-     gestione della corrispondenza e dell'archivio.
-     """
-
-''' Funzione per la generazione dei numeni romani'''
-def write_roman(num):
-    roman = OrderedDict()
-    roman[1000] = "M"
-    roman[900] = "CM"
-    roman[500] = "D"
-    roman[400] = "CD"
-    roman[100] = "C"
-    roman[90] = "XC"
-    roman[50] = "L"
-    roman[40] = "XL"
-    roman[10] = "X"
-    roman[9] = "IX"
-    roman[5] = "V"
-    roman[4] = "IV"
-    roman[1] = "I"
-
-    def roman_num(num):
-        for r in roman.keys():
-            x, y = divmod(num, r)
-            yield roman[r] * x
-            num -= (r * x)
-            if num > 0:
-                roman_num(num)
-            else:
-                break
-
-    return "".join([a for a in roman_num(num)])
+from pymodm import MongoModel
+from pymodm import MongoModel, fields
+from pymongo.write_concern import WriteConcern
 
 
 
-class Autore(models.Model):
+class MAutore(MongoModel):
 
     #Titolo
     TITLES = (
@@ -94,30 +58,30 @@ class Autore(models.Model):
     )
 
     # === Campi ===
-    titolo=models.CharField(max_length=20,choices=TITLES,blank=True) #Il titolo può essere vuoto
-    cognome = models.CharField(max_length=60, default='', help_text='Family name')
-    nome=models.CharField(max_length=60,default='',help_text='Name')
-    nascita = models.DateField(default='01/01/1900', blank=True, null=True, help_text='01/01/1988')
+    titolo=fields.CharField(max_length=20,choices=TITLES,blank=True) #Il titolo può essere vuoto
+    cognome = fields.CharField(max_length=60, default='', help_text='Family name')
+    nome=fields.CharField(max_length=60,default='',help_text='Name')
+    nascita = fields.DateField(default='01/01/1900', blank=True, null=True, help_text='01/01/1988')
 
     #Dati di nascita della persona
-    luogo_nascita=models.CharField(max_length=100,blank=False,default='')
-    stato_nascita = models.CharField(max_length=100, blank=False,default='')
-    genere=models.CharField(max_length=10,choices=GENERE,default='')
+    luogo_nascita=fields.CharField(max_length=100,blank=False,default='')
+    stato_nascita = fields.CharField(max_length=100, blank=False,default='')
+    genere=fields.CharField(max_length=10,choices=GENERE,default='')
 
     #Dati residenza autore
-    indirizzo = models.CharField(max_length=100,default='')
-    citta = models.CharField(max_length=100,default='')
-    provincia = models.CharField(max_length=60, default='')
-    stato = models.CharField(max_length=60,default='')
-    zip_code=models.CharField(max_length=60,default='')
+    indirizzo = fields.CharField(max_length=100,default='')
+    citta = fields.CharField(max_length=100,default='')
+    provincia = fields.CharField(max_length=60, default='')
+    stato = fields.CharField(max_length=60,default='')
+    zip_code=fields.CharField(max_length=60,default='')
 
     telefono = PhoneNumberField(default='', help_text='+393477093239 o 003321128832',blank=True, null=True)
     mobile = PhoneNumberField(default='', help_text='+393477093239 o 003321128832', blank=True, null= True)
-    mail = models.EmailField(max_length=100,default='',blank=True, null= True, unique= True)
-    website = models.CharField(default='',max_length=100, help_text='sitoweb www', blank=True, null=True)
+    mail = fields.EmailField(max_length=100,default='',blank=True, null= True, unique= True)
+    website = fields.CharField(default='',max_length=100, help_text='sitoweb www', blank=True, null=True)
 
-    lingua = models.CharField(default='IT',choices=LINGUA, blank=False, null=False, max_length=60)
-    imagefile = models.ImageField(db_column='imagefile', upload_to='pic_folder/autori', blank=True,help_text='immagine autore se presente')
+    lingua = fields.CharField(default='IT',choices=LINGUA, blank=False, null=False, max_length=60)
+    imagefile = fields.ImageField(db_column='imagefile', upload_to='pic_folder/autori', blank=True,help_text='immagine autore se presente')
 
     #history = HistoricalRecords()
 
@@ -133,18 +97,15 @@ class Autore(models.Model):
     # === url ===
     def url(self):
         # returns a URL for either internal stored or external image url
-        # if self.externalURL:
-        #     return self.externalURL
-
-        if not self.imagefile:
-            return ''
+        if self.externalURL:
+            return self.externalURL
         else:
             # is this the best way to do this??
-            return os.path.join('/', settings.MEDIA_URL, os.path.basename(str(self.imagefile)))
+            return os.path.join('/', settings.MEDIA_URL, os.path.basename(str(self.image)))
 
     # === unicode ===
     def __unicode__(self):
-        return self.url()
+        return self.image.url
 
     # === str ===
     def __str__(self):
@@ -157,28 +118,28 @@ class Autore(models.Model):
     image_.allow_tags = True
 
     def save_low(self, force_insert=False, force_update=False):
-        self.cognome=self.cognome.capitalize().encode('utf-8')
-        self.nome = self.nome.capitalize().encode('utf-8')
-        super(Autore, self).save(force_insert, force_update)
+        self.cognome=self.cognome.capitalize()
+        self.nome = self.nome.capitalize()
+        super(MAutore, self).save(force_insert, force_update)
 
 
 
-class Immagini(models.Model):
+class MImmagini(MongoModel):
     """
          Modello per la memorizzaizione dei dati, immagini delle opere d'arte.
          """
     #Record base
-    datestamp = models.DateTimeField(auto_now_add=True)
+    datestamp = fields.DateTimeField(auto_now_add=True)
 
     #Modello dati
-    titolo = models.ForeignKey('Opera', on_delete=models.DO_NOTHING, default='',blank=True,related_name="img_titolo_opera",null=True)
-    commento=models.TextField(default="",help_text="breve commento all'opera o note", blank=True)
-    imagefile = models.ImageField(db_column='imagefile',upload_to='pic_folder/opere', blank=True, default="logo_no_image.png")
-    imagefile1 = models.ImageField(db_column='imagefile1', upload_to='pic_folder/opere/im1', blank=True)
-    imagefile2 = models.ImageField(db_column='imagefile2', upload_to='pic_folder/opere/im2', blank=True)
-    preview = models.ImageField(db_column='preview', upload_to='pic_folder/opere/preview', blank=True)
-    preview1 = models.ImageField(db_column='preview1', upload_to='pic_folder/opere/preview1', blank=True)
-    metainfo=models.TextField(default='',blank=True)
+    titolo = fields.ForeignKey('Opera', on_delete=fields.CASCADE, default='',blank=True,related_name="img_titolo_opera",null=True)
+    commento=fields.TextField(default="",help_text="breve commento all'opera o note", blank=True)
+    imagefile = fields.ImageField(db_column='imagefile',upload_to='pic_folder/opere', blank=True, default="logo_no_image.png")
+    imagefile1 = fields.ImageField(db_column='imagefile1', upload_to='pic_folder/opere/im1', blank=True)
+    imagefile2 = fields.ImageField(db_column='imagefile2', upload_to='pic_folder/opere/im2', blank=True)
+    preview = fields.ImageField(db_column='preview', upload_to='pic_folder/opere/preview', blank=True)
+    preview1 = fields.ImageField(db_column='preview1', upload_to='pic_folder/opere/preview1', blank=True)
+    metainfo=fields.TextField(default='',blank=True)
 
     #history = HistoricalRecords()
     #Strutture accessorie
@@ -199,10 +160,7 @@ class Immagini(models.Model):
     def __str__(self):
 
         if(self.titolo):
-            # title = self.titolo.posizione_archivio + " - " + self.titolo.autore.cognome + " - " + self.titolo.titolo_opera + " / " + self.titolo.anno_realizzazione.__str__()
-
-            title=self.titolo.posizione_archivio + " - " + self.titolo.autore.cognome + " - / " + self.titolo.anno_realizzazione.__str__()
-            return title
+            return self.titolo.posizione_archivio + " - " + self.titolo.autore.cognome + " - " + self.titolo.titolo_opera + " / " + self.titolo.anno_realizzazione.__str__()
             # self.titolo.titolo_opera
         else:
             return "RIFERIMENTO VUOTO"
@@ -298,69 +256,70 @@ class Immagini(models.Model):
         self.metainfo=self.image_meta_()
         #creazione immagine anteprima
         #self.make_thumbnail()
-        super(Immagini, self).save()
+        super(MImmagini, self).save()
 
 
-class Opera(models.Model):
+
+
+
+
+class MOpera(MongoModel):
 
     #Modello dati
     #riferimento esterno
-    #id=models.IntegerField(primary_key=True,auto_created=True,blank=None,editable=False)
-    autore=models.ForeignKey('Autore', on_delete=models.DO_NOTHING, default='',related_name='autore',blank=True,)
-    titolo_opera = models.CharField(max_length=120, default='')
-    descrizione = models.TextField( default='',blank=True, null= True)
+    #id=fields.IntegerField(primary_key=True,auto_created=True,blank=None,editable=False)
+    autore=fields.ForeignKey('Autore', on_delete=fields.CASCADE, default='',related_name='autore',blank=True,)
+    titolo_opera = fields.CharField(max_length=120, default='')
+    descrizione = fields.TextField( default='',blank=True, null= True)
 
-    nazione = models.CharField(max_length=60, default='')
-    riconoscimenti = models.CharField(max_length=60, default='',blank=True, null= True)
+    nazione = fields.CharField(max_length=60, default='')
+    riconoscimenti = fields.CharField(max_length=60, default='',blank=True, null= True)
 
     #Dati opera
-    dimensione_lastra_y = models.IntegerField(default=0, help_text="dimensione in mm")
-    dimensione_lastra_x = models.IntegerField(default=0, help_text="dimensione in mm")
-    dimensione_foglio_y = models.IntegerField(default=0, help_text="dimensione in mm")
-    dimensione_foglio_x = models.IntegerField(default=0, help_text="dimensione in mm")
+    dimensione_lastra_y = fields.IntegerField(default=0, help_text="dimensione in mm")
+    dimensione_lastra_x = fields.IntegerField(default=0, help_text="dimensione in mm")
+    dimensione_foglio_y = fields.IntegerField(default=0, help_text="dimensione in mm")
+    dimensione_foglio_x = fields.IntegerField(default=0, help_text="dimensione in mm")
 
-    #numero_lastre = models.IntegerField(default=0, help_text="")
-    tecnica = models.CharField(max_length=80, default='')
+    #numero_lastre = fields.IntegerField(default=0, help_text="")
+    tecnica = fields.CharField(max_length=80, default='')
 
-    anno_realizzazione = models.IntegerField(default=datetime.datetime.now().year)
+    anno_realizzazione = fields.IntegerField(default=datetime.datetime.now().year)
 
     # Permette la scelta solo negli ultimi due anni
     anni=[a for a in range(1993,datetime.date.today().year+2)[::2]]
-    EDIZIONI = [(str(write_roman(int((a-1993)/2)+1)+' Biennale - '+str(a)),str(write_roman(int((a-1993)/2)+1)+'- Biennale -'+str(a))) for a in anni]
+    EDIZIONI = [(str(write_roman(int((a-1993)/2)+1)+'- Biennale -'+str(a)),str(write_roman(int((a-1993)/2)+1)+'- Biennale -'+str(a))) for a in anni]
     EDIZIONI= EDIZIONI[::-1] #reverse array
 
     #YEARS=[(r,r) for r in range(datetime.datetime.now().year-1,datetime.datetime.now().year+1)]
-    #anno_presentazione = models.IntegerField( choices=YEARS, default=datetime.datetime.now().year)
-    edizione = models.TextField(max_length=60, choices=EDIZIONI, default=EDIZIONI[0][0], blank=True)
+    #anno_presentazione = fields.IntegerField( choices=YEARS, default=datetime.datetime.now().year)
+    edizione = fields.TextField(max_length=60, choices=EDIZIONI, default=EDIZIONI[0])
 
 
-    #commento_opera = models.TextField(default="", help_text="breve commento all'opera o note",blank=True)
-    note = models.TextField(max_length=60, default='',blank=True)
-    posizione_archivio = models.CharField(max_length=60, default='')
+    #commento_opera = fields.TextField(default="", help_text="breve commento all'opera o note",blank=True)
+    note = fields.TextField(max_length=60, default='',blank=True)
+    posizione_archivio = fields.CharField(max_length=60, default='')
 
 
     #Non è obbligatorio avere l'immagine da collegare
-    immagini=models.ForeignKey(Immagini,on_delete=models.CASCADE,default='',blank=True, null=True)
-    tag=models.TextField(max_length=200,default='', help_text="inserire i tag separati da una virgola")
+    immagini=fields.ForeignKey(Immagini,on_delete=fields.CASCADE,default='',blank=True, null=True)
+    tag=fields.TextField(max_length=200,default='', help_text="inserire i tag separati da una virgola")
 
     #history = HistoricalRecords()
 
 
     def immagini_(self):
-        print(self.immagini)
-        if self.immagini == None :
+        #if self.immagini == None :
             return u'<a href="/media/logo_no_image.png" target="_blank"><img src="/media/logo_no_image.png" style="max-width:150px;height:auto"></a>'
-        else:
-            return u'<a href="/media/{0}" target="_blank"><img src="/media/{0}" style="max-width:150px;height:auto"></a>'.format(self.immagini)
+        #else:
+            #return u'<a href="/media/{0}" target="_blank"><img src="/media/{0}" style="max-width:150px;height:auto"></a>'.format(self.immagini)
 
     immagini_.allow_tags = True
 
     #Strutture accessorie
     #nome del record collegato alla vista del modello
     def __str__(self):
-        # return self.posizione_archivio+" - "+self.autore.cognome+" - "+self.titolo_opera+" / "+self.anno_realizzazione.__str__()
-        title = self.posizione_archivio + " - " + self.autore.cognome + " - / " + self.anno_realizzazione.__str__()
-        return title.encode('utf-8')
+        return self.posizione_archivio+" - "+self.autore.cognome+" - "+self.titolo_opera+" / "+self.anno_realizzazione.__str__()
 
     def indicazione_(self):
         return self.titolo_opera + " / " + self.anno_realizzazione.__str__()
@@ -377,14 +336,14 @@ class Opera(models.Model):
         return str(MASK[0:len(MASK)-len(self.posizione_archivio)]+self.posizione_archivio)
 
     def save_low(self, force_insert=False, force_update=False):
-        self.titolo_opera = self.titolo_opera.capitalize().encode('utf-8')
-        self.nazione=self.nazione.capitalize().encode('utf-8')
-        self.tag=self.tag.lower().encode('utf-8')
-        self.autore.cognome=self.autore.cognome.capitalize().encode('utf-8')
-        self.autore.nome = self.autore.nome.capitalize().encode('utf-8')
+        self.titolo_opera = self.titolo_opera.capitalize()
+        self.nazione=self.nazione.capitalize()
+        self.tag=self.tag.lower()
+        self.autore.cognome=self.autore.cognome.capitalize()
+        self.autore.nome = self.autore.nome.capitalize()
 
 
-        super(Opera, self).save(force_insert, force_update)
+        super(MOpera, self).save(force_insert, force_update)
 
     class Meta:
         verbose_name_plural = "Opere"

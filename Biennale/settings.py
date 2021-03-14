@@ -14,6 +14,7 @@ import os
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+DB_BASE_DIR = '/home/acqui/'
 
 
 # Quick-start development settings - unsuitable for production
@@ -26,7 +27,7 @@ SECRET_KEY = 'd8m+37h8q_6!1$6a(cc-*fz*j71=@n5hvs5$rp%7%w27yxa)#!'
 #DEBUG = False
 DEBUG = True
 
-ALLOWED_HOSTS = ['89.38.144.51','biennale.titansolution.it']
+ALLOWED_HOSTS = ['217.61.15.183','89.38.144.51','89.46.74.247','biennale.titansolution.it']
 
 LANGUAGE_CODE = 'it-it'  # or other appropriate code
 USE_I18N = True
@@ -35,19 +36,21 @@ USE_L10N = True
 # Application definition
 
 INSTALLED_APPS = [
-    'jet.dashboard',
-    'jet',
+    # 'jet.dashboard',
+    # 'jet',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'phonenumber_field',
+    # 'phonenumber_field',
     'Gestionale',
-    'simple_history',
+    'simple_history',#storico dei cambiamenti
     'dbbackup',  # django-dbbackup
     'django_fields',
+    # 'chartjs',
+    # 'admin_numeric_filter',
 
 
 ]
@@ -91,21 +94,28 @@ WSGI_APPLICATION = 'Biennale.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/1.11/ref/settings/#databases
-
+DATABASES_LOCAL_FOLDER='local_db/'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        'NAME': DB_BASE_DIR+DATABASES_LOCAL_FOLDER+'db.sqlite33',
+        #'ENGINE': 'djongo',
+        #'NAME': 'dev-example',
+        #'HOST': 'localhost'
+    },
+    'repo1':{
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': os.path.join(BASE_DIR+DATABASES_LOCAL_FOLDER+'/repo', 'db.repo'),
         #'ENGINE': 'djongo',
         #'NAME': 'dev-example',
         #'HOST': 'localhost'
     }
 }
-TEST_MONGO_DATABASE = {
-'db': 'test-example',
-'host': ['localhost'],
-'port': 27017,
-}
+# TEST_MONGO_DATABASE = {
+# 'db': 'test-example',
+# 'host': ['localhost'],
+# 'port': 27017,
+# }
 
 # Password validation
 # https://docs.djangoproject.com/en/1.11/ref/settings/#auth-password-validators
@@ -151,6 +161,9 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 LOGIN_REDIRECT_URL = '/'
 LOGOUT_REDIRECT_URL = '/'
+
+#JET configuration
+JET_CHANGE_FORM_SIBLING_LINKS = True
 
 
 

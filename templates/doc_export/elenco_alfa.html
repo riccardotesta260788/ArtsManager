@@ -1,0 +1,113 @@
+{% extends 'homepage.html' %}
+{% load personal_filter %}
+
+{% block contentmain %}
+
+    <style>
+        @media print {
+            .print-button {
+                visibility: hidden;
+            }
+
+            .row.impaginazione {
+                max-height: 30% !important;
+            }
+
+            .card {
+                padding: 10px;
+            }
+
+            .rows-print-as-pages .col-md-* {
+                page-break-before: always;
+            }
+
+            .intesta {
+                /*display: none;*/
+            }
+        }
+
+
+    </style>
+    <div class="row">
+        <div class="col-md-10 intesta"><img src="/static/Gestionale/logo.png" width="150px" style="float:right"><h1>Biennale Internazionale dell'Incisione<br>
+            Premio Acqui</h1>
+            <h2>Registro presenze</h2></div>
+        <div class="col-md-2">
+            <div class="btn-group-vertical" role="group" aria-label="navigation">
+                <button type="button" class="btn btn-primary print-button btn-" onclick="window.print()"><i
+                        class="icofont-print"></i> Stampa scheda
+                </button>
+                <button type="button" class="btn btn-primary print-button btn-" onclick="$('#full-list').show();$('#numeric-list').hide();$('#roman-list').hide()"><i
+                        class="icofont-print"></i> Lista completa
+                </button>
+                <button type="button" class="btn btn-primary print-button btn-" onclick="$('#full-list').hide();$('#numeric-list').show();$('#roman-list').hide()"><i
+                        class="icofont-print"></i> Elenco numerico 0-50
+                </button>
+                <button type="button" class="btn btn-primary print-button btn-" onclick="$('#full-list').hide(); $('#numeric-list').hide();$('#roman-list').show()"><i
+                        class="icofont-print"></i> Elenco romani I-XXV
+                </button>
+
+            </div>
+        </div>
+    </div>
+
+    <div id="full-list" class="container rows-print-as-pages">
+        <div class="row">
+            {% for entry in autori %}
+                <!-- Intestazione -->
+
+                <div class="col-md-6 " style="width: 6rem;">
+
+                    <div class="card-body">
+                        <h6 style="text-transform: uppercase">
+                            {{ forloop.counter }} - <br>{{ entry.cognome }} {{ entry.nome }} <hr>
+                        </h6>
+
+                    </div>
+                </div>
+
+            {% endfor %}</div>
+    </div>
+    <div id="numeric-list" class="container rows-print-as-pages ">
+        <div class="row">
+            {% for i in i|rjust:50 %}
+                <!-- Intestazione -->
+
+                <div class="col-md-6 " style="width: 6rem;">
+
+                    <div class="card-body">
+                        <h6 style="text-transform: uppercase">
+                            {{ forloop.counter }} <hr>
+                        </h6>
+
+                    </div>
+                </div>
+
+            {% endfor %}</div>
+    </div>
+    <div id="roman-list" class="container rows-print-as-pages">
+        <div class="row">
+            {% for i in i|rjust:25 %}
+                <!-- Intestazione -->
+
+                <div class="col-md-6 " style="width: 6rem;">
+
+                    <div class="card-body">
+                        <h6 style="text-transform: uppercase">
+                            {{ forloop.counter |roman_number }}
+                            <hr>
+                        </h6>
+
+                    </div>
+                </div>
+
+            {% endfor %}</div>
+    </div>
+     <script>
+         $('#full-list').show();
+         $('#numeric-list').hide();
+         $('#roman-list').hide();
+     </script>
+
+
+{% endblock %}

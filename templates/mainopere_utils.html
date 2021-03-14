@@ -14,7 +14,6 @@
     <table id="recordtable" class="display" style="width:100%">
          <thead>
         <tr style="font-size: 0.8em">
-             <th></th>
             <th></th>
             <th></th>
             <th>Posizione</th>
@@ -32,7 +31,6 @@
         <tbody>
         {% for entr in export_record %}
             <tr style="font-size: 0.7em">
-            <td>{{ entr.id }}</td>
             <td><a href="http://biennale.titansolution.it:8000/admin/Gestionale/opera/{{ entr.id }}">Mod</a></td>
                 <td>
                     {% if entr.immagini.imagefile  %}
@@ -43,7 +41,7 @@
                     {% endif %}
                     </td>
                 <td>{{ entr.posizione_archivio }}</td>
-                <td style="text-transform: uppercase">{{ entr.autore.cognome }} {{ entr.autore.nome }}<br>
+                <td style="text-transform: uppercase">{{ entr.autore.nome }} {{ entr.autore.cognome }}<br>
                     Stato: {{ entr.nazione }}</td>
                 <td style="text-transform: uppercase"><strong>{{ entr.titolo_opera }}</strong></td>
                 <td style="text-transform: lowercase">{{ entr.descrizione }}</td>

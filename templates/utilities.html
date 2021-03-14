@@ -1,0 +1,44 @@
+{% extends 'homepage.html' %}
+{% load staticfiles %}
+{% block messaggiologo %}
+    <div class="starter-template">
+        <h1>Script di sistema<br>
+            <small>Ogni modifica effettuata è irreversibile - ATTENZIONE.</small>
+        </h1>
+    </div>
+
+    <div class="row row-eq-height">
+    <div class="col-md">
+        <div class="jumbotron jumbotron-fluid">
+        <div class="container">
+            <h1 class="display-4">Low case</h1>
+            <p class="lead">Imposta in minuscolo tutti i caratteri dei modelli.</p>
+            <a href="../lowcase/">
+                <button type="button" class="btn btn-primary">Esegui</button>
+            </a>
+        </div>
+    </div>
+    </div>
+
+     <div class="col-md">
+        <div class="jumbotron jumbotron-fluid">
+        <div class="container">
+            <h1 class="display-4">Backup all data</h1>
+            <p class="lead">Salvataggio e backup su piattaforma MongoDB {{ dbtest }}</p>
+
+            <a href="../mongosave/">
+                <button type="button" class="btn btn-primary">Esegui</button>
+            </a>
+        </div>
+    </div>
+    </div>
+    </div>
+
+    <div class="alert alert-success" role="alert">
+        <h4 class="alert-heading">Disclaimer</h4>
+        <p>Il presente portale è riservato ogni accesso o tentativo di accesso è tracciato, per la gestione della
+            privacy in conformità al ai sensi dell’<strong>art.13 del Regolamento europeo (UE) 2016/679</strong>
+        <hr>
+        <p class="mb-0"><a href="http://www.privacy-regulation.eu/it/13.htm">Visualizza la normativa</a></p>
+    </div>
+{% endblock %}

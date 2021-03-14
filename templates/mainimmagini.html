@@ -5,28 +5,34 @@
 
     <table id="recordtable" class="display" style="width:100%">
         <thead>
-        <tr>
+        <tr><th></th>
+            <th></th>
+            <th></th>
             <th></th>
             <th>Autore</th>
             <th>Stato</th>
             <th>Titolo opera</th>
-            <th>Commento</th>
+
             <th>Image meta</th>
             <th>Data caricamneto</th>
         </tr>
         </thead>
 
         {% for entr in export_record %}
+            {%  if entr.titolo.autore.nome %}
             <tr>
+                <td>{{ entr.titolo.id}}</td>
+                <td>{{ entr.titolo.pos_arch}}</td>
+                <td><small>{{ entr.imagefile|cut:"pic_folder/opere/"}}</small></td>
+                <td><a href="/media/{{ entr.imagefile}}"><img src="/media/{{ entr.preview}}" style="max-width:80px;height:auto"></a></td>
+                <td>{{ entr.titolo.autore.cognome }} {{ entr.titolo.autore.nome }}</td>
+                <td>{{ entr.titolo.autore.stato }}</td>
+                <td>{{ entr.titolo.titolo_opera }}</td>
 
-                <td><a href="/media/{{ entr.imagefile}}"><img src="/media/{{ entr.imagefile}}" style="max-width:80px;height:auto"></a></td>
-                <td>{{ entr.autore.titolo }} {{ entr.autore.nome }} {{ entr.autore.cognome }}</td>
-                <td>{{ entr.autore.stato }}</td>
-                <td>{{ entr.titolo_opera }}</td>
-                <td>{{ entr.commento }}</td>
             <td> {{ entr.metainfo}}</td>
              <td> {{ entr.datestamp}}</td>
             </tr>
+            {% endif %}
 
         {% endfor %}
 
