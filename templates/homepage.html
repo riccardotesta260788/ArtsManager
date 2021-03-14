@@ -11,19 +11,21 @@
     <!-- Bootstrap core CSS -->
     <link href="https://getbootstrap.com/docs/4.1/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="{% static "Gestionale/css/icofont/icofont.css" %}">
-    <link rel="stylesheet" href="http://cdn.datatables.net/1.10.19/css/jquery.dataTables.min.css">
+    <link rel="stylesheet" href="//cdn.datatables.net/1.10.24/css/jquery.dataTables.min.css">
 
     <!-- Custom styles for this template -->
     <link href="https://getbootstrap.com/docs/4.1/examples/starter-template/starter-template.css" rel="stylesheet">
-    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
-            integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
-            crossorigin="anonymous"></script>
+{#    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"#}
+{#            integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"#}
+{#            crossorigin="anonymous"></script>#}
+    <script src="https://code.jquery.com/jquery-3.5.1.js"></script>
 
-    <script src="https://getbootstrap.com/docs/4.1/assets/js/vendor/jquery-slim.min.js"></script>
+{#    <script src="https://getbootstrap.com/docs/4.1/assets/js/vendor/jquery-slim.min.js"></script>#}
     <script src="https://getbootstrap.com/docs/4.1/assets/js/vendor/popper.min.js"></script>
     <script src="https://getbootstrap.com/docs/4.1/dist/js/bootstrap.min.js"></script>
-    <script src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.10.24/js/jquery.dataTables.min.js"></script>
 {#    Grafici #}
+
     <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
 </head>
 
@@ -56,7 +58,7 @@
     </div>
 </nav>
 
-<main role="main" class="container">
+<main role="main" class="container-fluid mx-4">
     {% block contentmain %}
     {% endblock %}
 
