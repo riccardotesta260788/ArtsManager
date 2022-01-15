@@ -7,7 +7,9 @@ from django.template.loader import get_template
 
 from Gestionale.models import *
 from django.http import JsonResponse
-
+from django.db.models import Count
+from django.db.models.functions import Lower
+from django.core import serializers
 
 def get_eta(request):
     anni = [0,25, 35, 50, 60, 80]
@@ -24,7 +26,9 @@ def get_eta(request):
         if index<len(deltime)-1:
             upperval=str(next(list_cycle))
             lowerval=str(interval)
+
             value=Autore.objects.filter(nascita__gt=upperval, nascita__lt=lowerval).count()
+
             print(index,value,lowerval, upperval)
             autors.append(value)
 
@@ -44,3 +48,15 @@ def get_eta(request):
     contesto = {"dataresult": autors, "labels": labels}
 
     return JsonResponse(contesto)
+
+def get_nation(request):
+
+    # nazioni=Autore.objects.values('stato').annotate(dcount=Count('lower_stato'))
+    nazioni=Autore.objects.annotate(lowername=Lower('stato')).values('lowername').annotate(dcount=Count('lowername')).order_by('-dcount')
+    stati,count=[],[]
+    for item in nazioni:
+        stati.append(item['lowername'])
+        count.append(item['dcount'])
+
+    print(nazioni)
+    return JsonResponse({'lowername':stati,'dcount':count})

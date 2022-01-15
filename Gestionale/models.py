@@ -37,7 +37,11 @@ THUMB_SIZE=(600, 600)
 
 
 def write_roman(num):
-    ''' Funzione per la generazione dei numeni romani'''
+    """
+    Funzione per la generazione dei numeni romani
+    :param num:
+    :return:
+    """
 
     roman = OrderedDict()
     roman[1000] = "M"
@@ -72,6 +76,11 @@ class Autore(models.Model):
     """
     Autore è il modello che gestisce i dati degli autori ed è collegato con chiavi esterne al
     :model:`Gestionale.Opera` e :model:`Gestionale.Immagini`
+
+    **Variabili**
+    TITLES : titoli.
+    GENERE : genere.
+    LINGUA  :  lingue parlate presenti nella scelta.
     """
 
     #Titolo
@@ -197,6 +206,8 @@ class Autore(models.Model):
 class Immagini(models.Model):
     """
          Modello per la memorizzaizione dei dati, immagini delle opere d'arte.
+
+
          """
     #Record base
     datestamp = models.DateTimeField(auto_now_add=True)

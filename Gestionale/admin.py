@@ -4,6 +4,8 @@ from .models import *
 from django.contrib.admin import AdminSite
 from .viste import views as mainview
 from jet.admin import CompactInline
+from import_export.admin import ImportExportModelAdmin
+
 
 admin.site.site_header ="Binneale Incisione - Admin"
 admin.site.site_title = "Binneale Incisione Portal"
@@ -24,7 +26,7 @@ admin_site = MyAdminSite()
 
 
 
-class ImmaginiAdmin(admin.ModelAdmin):
+class ImmaginiAdmin(ImportExportModelAdmin):
 
 
     def image_prew(self, obj):
@@ -42,7 +44,7 @@ class ImmaginiAdmin(admin.ModelAdmin):
         ('Anteprima', {'fields': ['preview', 'preview1']}),
     ]
 
-class AutoreAdmin(admin.ModelAdmin):
+class AutoreAdmin(ImportExportModelAdmin):
 
 
     def image_prew(self, obj):
@@ -61,7 +63,7 @@ class AutoreInline(CompactInline):
 
 
 
-class OperaAdmin(admin.ModelAdmin):
+class OperaAdmin(ImportExportModelAdmin):
 
     def image_prew(self, obj):
         if obj.immagini:
@@ -79,10 +81,10 @@ class OperaAdmin(admin.ModelAdmin):
 
 
     readonly_fields = ["image_prew", ]
-    list_display = ('titolo_opera','autore','riconoscimenti','pos_arch','edizione',   'image_prew', 'abstract_','tag')
+    list_display = ('id','titolo_opera','autore','riconoscimenti','pos_arch','edizione',   'image_prew', 'abstract_','tag')
     search_fields = ('posizione_archivio','tag','titolo_opera')
-    filter=('riconoscimenti','posizione_archivio','tag')
-    list_filter = ('riconoscimenti','tag','autore',)
+    filter=('titolo_opera','autore','edizione','posizione_archivio','tag')
+    list_filter = ('edizione','tag','autore',)
     list_per_page = 25
 
 

@@ -25,10 +25,11 @@
             table.impaginazione tr td {
                 padding: 0.5%;
                 background-color: #f1f1f1;
-                page-break-after:always;
+                page-break-after: always;
             }
         }
-        .intestazionepos{
+
+        .intestazionepos {
             background: darkblue;
             color: white;
         }
@@ -37,14 +38,21 @@
             .print-button {
                 visibility: hidden;
             }
-            div#sortable {}
-            .row.impaginazione{
-                max-height: 30%!important;
-            }ß
-        }
-            .operadiv:nth-child(3n) {
-                page-break-after: always!important;
+
+            div#sortable {
             }
+
+            .row.impaginazione {
+                max-height: 30% !important;
+            }
+        }
+
+        .operadiv:nth-child(2n) {
+            page-break-after: always!important;
+        }
+        {#.operadiv {#}
+        {#    page-break-after: always !important;#}
+        {#}#}
 
 
     </style>
@@ -55,20 +63,30 @@
                 privacy e gestione dei dati personali.</p></div>
         <div class="col-md-2">
             <div class="btn-group-vertical" role="group" aria-label="navigation">
-            <button type="button" class="btn btn-primary print-button btn-" onclick="window.print()"><i class="icofont-print"></i> Stampa scheda</button>
-            <button type="button" class="btn btn-primary print-button" onclick="selezionate()"><i class="icofont-bulb-alt"></i> Selezionati</button>
-            <button type="button" class="btn btn-primary print-button" onclick="finale()"><i class="icofont-badge"></i> Finale</button>
-           <button type="button" class="btn btn-primary print-button" onclick="tutte()"><i class="icofont-bullhorn"></i> Mostra tutto</button>
+                <button type="button" class="btn btn-primary print-button btn-" onclick="window.print()"><i
+                        class="icofont-print"></i> Stampa scheda
+                </button>
+                <button type="button" class="btn btn-primary print-button" onclick="selezionate()"><i
+                        class="icofont-bulb-alt"></i> Selezionati
+                </button>
+                <button type="button" class="btn btn-primary print-button" onclick="finale()"><i
+                        class="icofont-badge"></i> Finale
+                </button>
+                <button type="button" class="btn btn-primary print-button" onclick="tutte()"><i
+                        class="icofont-bullhorn"></i> Mostra tutto
+                </button>
             </div>
             <script>
                 function selezionate() {
                     $('.operadiv').hide()
                     $('.selezionata').show()
                 }
+
                 function finale() {
                     $('.operadiv').hide()
                     $('.finale').show()
                 }
+
                 function tutte() {
                     $('.operadiv').show()
 
@@ -76,7 +94,7 @@
             </script>
         </div>
     </div>
-<hr>
+    <hr>
     <div id="sortable">
         {% for entry in entries %}
             <!-- Intestazione -->
@@ -86,9 +104,9 @@
                                     selezionata finale
                                     {% elif entry.riconoscimenti == "selezionato" %}
                                     selezionata
-                                {% endif %}" data-price="{{ entry.posizione_archivio }}" >
+                                {% endif %}" data-price="{{ entry.posizione_archivio }}">
                 <h2 class="opera">
-                    <div class="row impaginazione" >
+                    <div class="row impaginazione">
                         <div class="col-md-4">
                             <h4 style="text-transform: uppercase"><small>Opera:</small><br>
                                 {{ entry.titolo_opera }}</h4></div>
@@ -124,11 +142,13 @@
 
                     <div class="col-md-3">
 
-                        {% if entry.immagini.preview  %}
-                            <a href="/media/{{ entry.immagini.preview}}"><img src="/media/{{ entry.immagini.preview}}" style="width: 80%"></a>
+                        {% if entry.immagini.preview %}
+                            <a href="/media/{{ entry.immagini.imagefile }}"><img
+                                    src="/media/{{ entry.immagini.preview }}" style="max-width:350px;width: 80%"></a>
 
                         {% else %}
-                            <a href="/media/logo_no_image.png"><img src="/media/logo_no_image.png" style="width: 100%;height:auto"></a>
+                            <a href="/media/logo_no_image.png"><img src="/media/logo_no_image.png"
+                                                                    style="width: 100%;height:auto"></a>
 
                         {% endif %}
                     </div>
@@ -140,9 +160,9 @@
                             </colgroup>
                             <tr>
                                 <td><i class="icofont-calendar"></i> <strong>Data di nascita:</strong></td>
-                                <td>{% if entry.autore.nascita  %}{{ entry.autore.nascita }}{% endif %}</td>
+                                <td>{% if entry.autore.nascita %}{{ entry.autore.nascita }}{% endif %}</td>
                             </tr>
-                        <!--
+                            <!--
                             <tr>
                                 <td><i class="icofont-location-pin"></i> <strong>Stato:</strong></td>
                                 <td> {{ entry.autore.stato }} - {{ entry.autore.zip }}</td>
@@ -165,8 +185,13 @@
                             </tr>
                             <tr>
                                 <td><strong>Dati tecnici opera</strong></td>
-                                <td style="font-variant: all-small-caps">Lastra: {{ entry.dimensione_lastra_y }} X {{ entry.dimensione_lastra_x }}
-                                    Foglio: {{ entry.dimensione_foglio_y }} X {{ entry.dimensione_foglio_x }}</td>
+                                {% if entry.dimensione_lastra %}
+                                    <td>{{ dimensione_lastra }}</td>
+                                {% else %}
+                                    <td style="font-variant: all-small-caps">Lastra: {{ entry.dimensione_lastra_y }}
+                                        X {{ entry.dimensione_lastra_x }}
+                                        Foglio: {{ entry.dimensione_foglio_y }} X {{ entry.dimensione_foglio_x }}</td>
+                                {% endif %}
                             </tr>
                             <tr>
                                 <td><strong>Tecnica:</strong></td>
@@ -180,13 +205,25 @@
                                 <td><strong>Anno presentazione:</strong></td>
                                 <td style="font-variant: all-small-caps">{{ entry.edizione }}</td>
                             </tr>
-                            <!-- <tr>
-                        <td><strong>Descrizione:</strong></td>
-                        <td>{{ entry.note }}</td>
-                    </tr>-->
+
+
                         </table>
                     </div>
 
+                </div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <table class="impaginazione" style="width: 100%; font-variant: small-caps">
+                            <tr>
+                                <td class="pr-3 mr-3"><strong>Descrizione:</strong></td>
+                                <td style="font-variant: all-small-caps; font-size:0.9rem">{{ entry.descrizione }}</td>
+                                <!-- <tr>
+                        <td><strong>Descrizione:</strong></td>
+                        <td>{{ entry.note }}</td>
+                    </tr>-->
+                            </tr>
+                        </table>
+                    </div>
                 </div>
 
                 <hr>
@@ -203,13 +240,13 @@
             $("#sortable div.operadiv").sort(sort_div_asc).appendTo('#sortable');
 
             function sort_div_asc(a, b) {
-                var na=$(a).attr("data-price")
+                var na = $(a).attr("data-price")
                 var a = parseInt(na, 10);
 
-                var nb=$(b).attr("data-price")
+                var nb = $(b).attr("data-price")
                 var b = parseInt(nb, 10);
 
-                console.log(a,b)
+                console.log(a, b)
 
                 return (b < a) ? 1 : -1;
             }
@@ -220,6 +257,7 @@
 
 
         }
+
         sort(1)
     </script>
 {% endblock %}

@@ -18,9 +18,11 @@ from django.conf.urls import url, include
 from django.contrib import admin
 
 urlpatterns = [
+    url(r'admin/doc/',include('django.contrib.admindocs.urls')),
     url(r'admin/', admin.site.urls),
     url(r'accounts/', include('django.contrib.auth.urls')),
     url(r'^', include('Gestionale.urls.urls')),
+
 
     # url(r'^jet/', include('jet.urls', 'jet')),  # Django JET URLS
     # url(r'^jet/dashboard/', include('jet.dashboard.urls', 'jet-dashboard')),  # Django JET dashboard URLS

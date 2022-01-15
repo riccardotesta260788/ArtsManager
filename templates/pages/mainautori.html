@@ -2,21 +2,25 @@
 {% block contentmain %}
     <h2>Elenco Autori</h2>
     <p>Voci trovate nel database: {{ elementi }}</p>
-    <p> Statistiche {% include 'statistiche/pie.html' %}</p>
+<hr>
+    <p>
+        {#        Statistiche sui partecipanti al premio#}
+        {% include 'statistiche/pie.html' %}</p>
     <table id="recordtable" class="display" style="width:100%">
         <thead>
-        <tr>
+        <tr class="text-uppercase">
             {#            DEBUG: Immagine autore#}
             {#            <th></th>#}
             <th></th>
             <th>Nome</th>
             <th>Cognome</th>
             <th><i class="icofont-calendar"></i> Data nascita</th>
-            <th><i class="icofont-court"></i> Luogo nascita</th>
-            <th><i class="icofont-court"></i> Stato nascita</th>
-            <th>Residenza</th>
-            <th>Residenza stato</th>
+            <th><i class="icofont-calendar"></i> Luogo nascita</th>
+            <th><i class="icofont-calendar"></i> Stato nascita</th>
+            <th><i class="icofont-court"></i>Residenza</th>
+            <th><i class="icofont-court"></i>Residenza stato</th>
             <th>Contatti</th>
+            <th><i class="icofont-speech-comments"></i> Lingua</th>
         </tr>
         </thead>
 
@@ -30,42 +34,48 @@
                 {#                        <img src="/media/logo_no_image.png" style="width:90%;height:auto; margin-top:20%">#}
                 {#                    {% endif %}</td>#}
 
-                <td class="align-center small">
+                <td class="w-auto align-center ">
                     {#                    <i class="icofont-{{ entr.genere }}" style="font-size: 2em"></i> #}
                     {{ entr.titolo }}</td>
-                <td> {{ entr.cognome | capfirst }}
+                <td class="w-auto align-center text-uppercase"> {{ entr.cognome | capfirst }}
                 </td>
-                <td>{{ entr.nome | capfirst }} </td>
+                <td class="w-auto align-center text-uppercase">{{ entr.nome | capfirst }} </td>
                 {#            Formato data anno-mese-giorno#}
                 <td class="w-auto small">{{ entr.nascita | date:'Y-m-d' }}</td>
                 <td>{{ entr.luogo_nascita |lower | capfirst }}</td>
-                <td class="small">{{ entr.stato_nascita | upper }}
+                <td class="w-auto small">{{ entr.stato_nascita | upper }}
                 </td>
 
-                <td class="small">
-                    <i class="icofont-address-book "></i> {{ entr.indirizzo |lower |capfirst }}
-                    <br>{{ entr.citta |lower |capfirst }} {{ entr.stato_provincia |lower |capfirst }}
-                    <br>{{ entr.zip }}
+                <td class="w-auto  text-wrap">
+                    <stron>Indirizzo:</stron>
+                    {{ entr.indirizzo |lower |capfirst }}
+                    <br><strong>Città: </strong>{{ entr.citta |lower |capfirst }} {{ entr.stato_provincia |lower |capfirst }}
+                    {% if entr.zip %}
+                        <br><strong>Zip/Cap: </strong>{{ entr.zip }}
+                    {% endif %}
                 </td>
-                <td class="small">{{ entr.stato | upper }}
+                <td class="w-auto small">{{ entr.stato | upper }}
                 </td>
                 <td class="w-auto">
 
                     {% if entr.telefono != None %}
-                        <p class="alert-info"><i class="icofont-phone"></i> {{ entr.telefono }}</p>
+                        <p class="text-info"><i class="icofont-phone"></i> {{ entr.telefono }}</p>
                     {% else %}
-                        <p class="alert-danger">Telefono</p>
+                        <p class="text-danger">no telefono</p>
                     {% endif %}
                     {% if entr.mail != None %}
-                        <p class="alert-info"><i class="icofont-ui-email"></i> {{ entr.mail | lower }}</p>
+                        <p class="text-info"><i class="icofont-ui-email"></i> {{ entr.mail | lower }}</p>
                     {% else %}
-                        <p class="alert-danger">Email</p>
+                        <p class="text-danger">no mail</p>
                     {% endif %}
+                </td>
+                <td class="w-auto">
                     {% if entr.lingua != None %}
-                        <p class="alert-info"><i class="icofont-speech-comments"></i> {{ entr.lingua }}</p>
+                        <p class="text-info smaller"> {{ entr.lingua }}</p>
                     {% else %}
                         <p class="alert-danger">Lingua</p>
                     {% endif %}
+                </td>
 
             </tr>
 
@@ -73,17 +83,23 @@
     </table>
     <hr>
 
+
     <script>
         {#Filtro per data table visualizzazione record#}
         $(document).ready(function () {
             $.noConflict();
-            $('#recordtable').DataTable({
+            $datatable = $('#recordtable').DataTable({
+                orderCellsTop: true,
+                fixedHeader: true,
                 aLengthMenu: [
                     [25, 50, 100, 200, -1],
                     [25, 50, 100, 200, "All"]
                 ],
-                iDisplayLength: -1
+                iDisplayLength: -1,
+
             });
+
+
         });
     </script>
 {% endblock %}

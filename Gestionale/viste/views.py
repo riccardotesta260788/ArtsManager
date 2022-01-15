@@ -7,6 +7,7 @@ from django.contrib.auth.decorators import login_required
 import pymongo
 #from .mongo_models import *
 
+
 def home(request):
     return render(request, 'homepageNotLog.html', context={"message": "Home page"})
 
@@ -15,11 +16,11 @@ def login(request):
     return render(request, 'registration/login.html', context={})
 
 
-def handler404(request):
+def handler404(request, *args, **argv):
     return render(request, 'errors.html', status=404, context={"errore": '404',
                                                                "message":"Pagina non trovata"})
 
-def handler500(request):
+def handler500(request, *args, **argv):
     return render(request, 'errors.html', status=500, context={"errore": '500',
                                                               "message":"Errore del server"})
 
@@ -44,10 +45,20 @@ def opera_full(request):
     entry = Opera.objects.all().filter(id=idval)
     return render(request, 'opera_completa.html', context={"id":id, "entry":entry[0]})
 
+
+
 @login_required
 def opere_list_full(request):
     entry = Opera.objects.all().order_by('posizione_archivio')
     return render(request, 'opere_lista_completa.html', context={"id":id, "entries":entry})
+
+# Lista ultima edizione
+@login_required
+def opere_list_full_last(request):
+    print(Opera.EDIZIONI[0][1])
+    entry = Opera.objects.all().filter(edizione=Opera.EDIZIONI[1][0]).order_by('posizione_archivio')
+    return render(request, 'opere_lista_completa.html', context={"id":id, "entries":entry})
+
 
 @login_required
 def opere_list_full_autori(request):

@@ -44,13 +44,15 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.admindocs',
     # 'phonenumber_field',
     'Gestionale',
     'simple_history',#storico dei cambiamenti
-    'dbbackup',  # django-dbbackup
+    # 'dbbackup',  # django-dbbackup
     'django_fields',
     # 'chartjs',
     # 'admin_numeric_filter',
+    'import_export',
 
 
 ]
@@ -68,7 +70,9 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'django.middleware.locale.LocaleMiddleware',
+    'django.contrib.admindocs.middleware.XViewMiddleware',
     'simple_history.middleware.HistoryRequestMiddleware',
+
     ]
 
 ROOT_URLCONF = 'Biennale.urls'
@@ -85,6 +89,9 @@ TEMPLATES = [
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
             ],
+            'libraries' : {
+                'staticfiles': 'django.templatetags.static',
+            }
         },
     },
 ]

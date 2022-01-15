@@ -33,7 +33,7 @@
         {% for entr in export_record %}
             <tr style="font-size: 0.7em">
             <td>{{ entr.id }}</td>
-            <td><a href="http://biennale.titansolution.it:8000/admin/Gestionale/opera/{{ entr.id }}">Mod</a></td>
+            <td><a href="http://biennale.titansolution.it:8888/admin/Gestionale/opera/{{ entr.id }}" target="_blank">Mod</a></td>
                 <td>
                     {% if entr.immagini.imagefile  %}
                         <a href="/media/{{ entr.immagini.imagefile}}"><img src="/media/{{ entr.immagini.preview}}" style="max-width:80px;height:auto"></a><small>clicca per ingrandire</small>
