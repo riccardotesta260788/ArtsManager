@@ -9,6 +9,7 @@ import re
 from ftplib import FTP, FTP_TLS
 import unicodedata
 import numpy as np
+import config
 
 # from django.conf import settings as st
 # st.configure() #env configurazione
@@ -27,13 +28,8 @@ base_path='/home/acqui/'
 remotefold_images="immagini/"
 remotefold_database="DB/"
 
-
-rl = {
-    'host': 'ftp.titansolution.it',
-    'password': 'Riki1988',
-    'username': '4458659@aruba.it',
-    'port': 21,
-}
+#credenziali per l'accesso FTP
+rl = config.rl
 
 
 def lg(log, c='', m=''):
