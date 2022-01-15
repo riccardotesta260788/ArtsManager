@@ -29,6 +29,13 @@ remotefold_images="immagini/"
 remotefold_database="DB/"
 
 #credenziali per l'accesso FTP
+# rl = {
+#     'host': 'xxxx',
+#     'password': 'xxx',
+#     'username': 'xxx',
+#     'port': xx,
+# }
+
 rl = config.rl
 
 
