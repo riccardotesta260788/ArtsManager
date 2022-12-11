@@ -1,11 +1,11 @@
 from django.contrib import admin
-
-from .models import *
 from django.contrib.admin import AdminSite
-from .viste import views as mainview
-from jet.admin import CompactInline
+from django_extensions.admin import ForeignKeyAutocompleteAdmin
 from import_export.admin import ImportExportModelAdmin
 
+from jet.admin import CompactInline
+from .models import *
+from .viste import views as mainview
 
 admin.site.site_header ="Binneale Incisione - Admin"
 admin.site.site_title = "Binneale Incisione Portal"
@@ -33,7 +33,7 @@ class ImmaginiAdmin(ImportExportModelAdmin):
         return mark_safe('<img src="/media/{0}" style="max-width:150px;height:auto">'.format(obj.preview))
 
     readonly_fields = ["image_prew","metainfo" ]
-    list_display = ('titolo',"image_meta_","image_prew")
+    list_display = ("id","id_inventario",'titolo',"image_meta_","image_prew")
     search_fields = ('titolo',)
     list_filter=('titolo',)
     list_per_page = 25
@@ -48,10 +48,10 @@ class AutoreAdmin(ImportExportModelAdmin):
 
 
     def image_prew(self, obj):
-        return mark_safe('<img src="/media/{0}" style="max-width:150px;height:auto">'.format(obj.imagefile)
+        return mark_safe('<img src="/media/{0}" style="max-width:100px;height:auto">'.format(obj.imagefile)
                      )
     readonly_fields = ["image_prew", ]
-    list_display = ('titolo','nome','cognome','indirizzo','citta','stato','telefono')
+    list_display = ('id','titolo','nome','cognome','indirizzo','citta','stato','telefono')
     search_fields = ('nome','cognome','indirizzo','citta','stato','telefono','mail')
     radio_fields = {"lingua": admin.HORIZONTAL,"genere": admin.HORIZONTAL}
     list_per_page = 25
@@ -63,7 +63,8 @@ class AutoreInline(CompactInline):
 
 
 
-class OperaAdmin(ImportExportModelAdmin):
+class OperaAdmin(ImportExportModelAdmin, ForeignKeyAutocompleteAdmin):
+
 
     def image_prew(self, obj):
         if obj.immagini:
@@ -79,23 +80,41 @@ class OperaAdmin(ImportExportModelAdmin):
                     'logo_no_image.png'))
         return mark_safe(payload)
 
+    related_search_fields = {'autore': ['cognome'], 'immagini':['id_inventario']}
 
     readonly_fields = ["image_prew", ]
-    list_display = ('id','titolo_opera','autore','riconoscimenti','pos_arch','edizione',   'image_prew', 'abstract_','tag')
-    search_fields = ('posizione_archivio','tag','titolo_opera')
-    filter=('titolo_opera','autore','edizione','posizione_archivio','tag')
+    list_display = ['id','titolo_opera','get_autore_nome','get_autore_cognome','riconoscimenti','pos_arch','edizione',  'image_prew', 'abstract_','tag',]
+    #search_fields = ('posizione_archivio','tag','titolo_opera')
+    #filter=('titolo_opera','autore','get_autore_nome','get_autore_cognome','edizione','posizione_archivio','tag')
     list_filter = ('edizione','tag','autore',)
-    list_per_page = 25
+    #autocomplete_fields=['autore','tags_s']
+    list_per_page = 500
+
+    ##Campi per l'esportazione dei dati
+    #fields = ('id','titolo_opera','get_autore_nome','get_autore_cognome','riconoscimenti','pos_arch','edizione',   'image_prew', 'abstract_','tag')
+
+    # Estrazioni chiavi esterne
+    def get_autore_nome(self, obj):
+        return obj.autore.nome
+    get_autore_nome.admin_order_field  = 'Nome autore'  #Allows column order sorting
+    get_autore_nome.short_description = 'Nome Autore'  #Renames column head
+
+    def get_autore_cognome(self, obj):
+        return obj.autore.cognome
+    get_autore_cognome.admin_order_field  = 'Cognome autore'  #Allows column order sorting
+    get_autore_cognome.short_description = 'Cognome Autore'  #Renames column head
 
 
 
-
-
+class TagsAdmin(admin.ModelAdmin):
+    list_display = ["nome", ]
+    search_fields = ["nome"]
 
 # Register your models here.
 admin.site.register(Autore,AutoreAdmin)
 admin.site.register(Opera,OperaAdmin)
 admin.site.register(Immagini,ImmaginiAdmin)
+admin.site.register(Tags, TagsAdmin)
 
 
 
