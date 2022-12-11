@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="SshConfigs">
+    <configs>
+      <sshConfig authType="PASSWORD" host="89.46.74.247" id="083e308c-82d5-45b3-a297-78e78e1e34b2" port="22" customName="Biennale nuovo" nameFormat="CUSTOM" username="root" />
+      <sshConfig authType="PASSWORD" host="89.46.74.247" id="2da1d0f1-9122-46db-89b5-6df7a0979b40" port="22" customName="Biennale nuovo" nameFormat="CUSTOM" username="root" />
+    </configs>
+  </component>
+</project>

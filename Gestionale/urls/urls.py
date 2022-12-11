@@ -1,18 +1,20 @@
-from Gestionale.viste import importload as impload
-from Gestionale.viste import utility as utils
-from Gestionale.viste import views as mainview
-from Gestionale.viste import documents as doc
-
 from django.conf import settings
 from django.conf.urls import url, include
-from django.urls import path
 from django.conf.urls.static import static
 from django.contrib.auth import views as auth_views
+from django.urls import path
 
+from Gestionale.viste import documents as doc
+from Gestionale.viste import importload as impload
+from Gestionale.viste import tesdoc as docx
+from Gestionale.viste import utility as utils
+from Gestionale.viste import views as mainview
 
 app_name = 'core'
 
-urlpatterns = [
+
+urlpatterns = [path('jet_api/', include('jet_django.urls')),
+
                   url(r'^$', mainview.home, name="home"),
                   url(r'^login/$', mainview.login, name='login'),
                   url(r'^logout/$', auth_views.LogoutView, name='logout'),
@@ -53,6 +55,10 @@ urlpatterns = [
 
                   # statistic
                   url(r'^stat/', include('Gestionale.urls.statistic'), name='statistic'),  # salvataggio dati in MongoDB
+
+                  #doc gernerator
+                  url(r'^doctest/', docx.document, name='documents'),  # salvataggio dati in MongoDB
+
 
               ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
