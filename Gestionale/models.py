@@ -9,23 +9,17 @@ inormazioni e dei dati per le mostre d'arte o per eventi.
 3. **Immagini** - Gestione immagini Opere
 """
 
-import os
-from io import StringIO,BytesIO
-from django.db import models,migrations
-from django.views import generic
-from phonenumber_field.modelfields import PhoneNumberField
 import datetime
-from django.conf import settings
-from django.utils.safestring import mark_safe
-import PIL
-from django import forms
-from collections import OrderedDict
-from PIL import Image as Img
-from django.conf import settings
-from django.core.files import temp as tempfile
-from django.core.files.base import File
-from django.utils.encoding import smart_str
+import os
 import urllib
+from collections import OrderedDict
+from io import BytesIO
+
+import PIL
+from django.conf import settings
+from django.db import models
+from django.utils.safestring import mark_safe
+from phonenumber_field.modelfields import PhoneNumberField
 
 MASK="000"
 THUMB_SIZE=(600, 600)
@@ -71,6 +65,8 @@ def write_roman(num):
     return "".join([a for a in roman_num(num)])
 
 
+class Tags(models.Model):
+    nome = models.TextField(unique=True, blank=False, null=False, serialize=True)
 
 class Autore(models.Model):
     """
@@ -221,6 +217,7 @@ class Immagini(models.Model):
     preview = models.ImageField(db_column="preview", upload_to='pic_folder/opere/preview', blank=True)
     preview1 = models.ImageField(db_column="preview1", upload_to='pic_folder/opere/preview1', blank=True)
     metainfo=models.TextField(default='',blank=True)
+    id_inventario = models.TextField(default="-", help_text="Identificativo inventario", blank=True)
 
     #history = HistoricalRecords()
     #Strutture accessorie
@@ -280,7 +277,6 @@ class Immagini(models.Model):
             return
 
         from PIL import Image
-        from io import StringIO
         from django.core.files.uploadedfile import SimpleUploadedFile
         import os
 
@@ -387,6 +383,8 @@ class Opera(models.Model):
     #Non è obbligatorio avere l'immagine da collegare
     immagini=models.ForeignKey(Immagini,on_delete=models.CASCADE,default='',blank=True, null=True)
     tag=models.TextField(max_length=200,default='', help_text="inserire i tag separati da una virgola")
+
+    # tags_s=models.ForeignKey('Tags',on_delete=models.DO_NOTHING,related_name='tag_s',blank=False,null=True)
 
 
     #history = HistoricalRecords()

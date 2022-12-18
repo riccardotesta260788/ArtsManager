@@ -1,0 +1,18 @@
+{% extends "admin/base.html" %}
+{% load i18n static %}
+
+{% block title %}{{ title }} | {{ site_title|default:_('Django site admin') }}{% endblock %}
+
+{% block branding %}
+
+    <div class="row">
+        <div class="col-md-12 text-center">
+            <img width="100px" src="{% static 'Gestionale/logo.png' %}">
+            <h1 id="site-name" class="text-uppercase">{% trans 'Administration Panel - Restricted Access' %}</h1>
+            {#    <a href="{% url 'admin:index' %}">{{ site_header|default:_('Django administration') }}</a>#}
+        </div>
+    </div>
+
+{% endblock %}
+
+{% block nav-global %}{% endblock %}
