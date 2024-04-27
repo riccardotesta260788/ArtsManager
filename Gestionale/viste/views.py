@@ -1,10 +1,9 @@
-from django.shortcuts import render
-from django.http import HttpResponse
-import datetime
-from django.template.loader import get_template
-from Gestionale.models import *
 from django.contrib.auth.decorators import login_required
-import pymongo
+from django.shortcuts import render
+
+from Gestionale.models import *
+
+
 #from .mongo_models import *
 
 
@@ -26,7 +25,7 @@ def handler500(request, *args, **argv):
 
 @login_required
 def export_data_autori(request):
-    entry=Autore.objects.all()
+    entry = Autore.objects.all().order_by('cognome').distinct()
     return render(request, 'pages/mainautori.html', context={"export_record":entry, "elementi":entry.count()})
 
 @login_required
@@ -56,7 +55,8 @@ def opere_list_full(request):
 @login_required
 def opere_list_full_last(request):
     print(Opera.EDIZIONI[0][1])
-    entry = Opera.objects.all().filter(edizione=Opera.EDIZIONI[1][0]).order_by('posizione_archivio')
+    edizione = 'XVI- Biennale -2023'
+    entry = Opera.objects.all().filter(edizione=edizione).order_by('posizione_archivio')
     return render(request, 'opere_lista_completa.html', context={"id":id, "entries":entry})
 
 
@@ -67,12 +67,11 @@ def opere_list_full_autori(request):
 
 @login_required
 def autori_full(request):
-    autori = Autore.objects.all().order_by('cognome')
+    autori = Autore.objects.all().distinct().order_by('cognome')
     return render(request, 'mainautorilist.html', context={"id":id, "autori":autori})
 
 @login_required
 def backup(request):
-    import os
     files=[]
 
     import os, fnmatch
@@ -112,9 +111,6 @@ def lower_case(request):
     return render(request, 'utilities.html', context={"lower": entries.count()})
 
 
-from django.core import serializers
-import urllib
-
 @login_required
 def mongosave(request):
     from pymodm import connect
@@ -143,9 +139,12 @@ def mongosave(request):
 @login_required
 def adress_plaque(request):
     entries = Autore.objects.all().order_by('cognome')
-    for entry in entries:
-        entry.save_low()
-        print(entry)
+
+    # for entry in entries:
+    #     entry.save_low()
+    # print(entry)
+    # Richiesta asincrona
+
 
     return render(request, 'doc_export/export_plaque.html', context={"autori": entries})
 
