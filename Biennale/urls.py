@@ -14,14 +14,35 @@ Including another URLconf
     2. Add a URL to urlpatterns:  url(r'^blog/', include('blog.urls'))
 """
 
-from django.conf.urls import url, include
 from django.contrib import admin
+from django.urls import include, re_path
+
+admin.autodiscover()
+
+'''OLD Python2.7
+'''
+# urlpatterns = [
+#
+#     url(r'admin/doc/',include('django.contrib.admindocs.urls')),
+#     re_path(r'admin/', admin.site.urls),
+#     url(r'accounts/', include('django.contrib.auth.urls')),
+#     url(r'async_include/', include('async_include.urls', namespace="async_include")),
+#     url(r'^', include('Gestionale.urls.urls')),
+#     url(r'^', include('Analisis.urls.urls')), #Urls per la gestione delle attività di routine
+#
+#
+#     # url(r'^jet/', include('jet.urls', 'jet')),  # Django JET URLS
+#     # url(r'^jet/dashboard/', include('jet.dashboard.urls', 'jet-dashboard')),  # Django JET dashboard URLS
+# ]
 
 urlpatterns = [
-    url(r'admin/doc/',include('django.contrib.admindocs.urls')),
-    url(r'admin/', admin.site.urls),
-    url(r'accounts/', include('django.contrib.auth.urls')),
-    url(r'^', include('Gestionale.urls.urls')),
+
+    re_path(r'admin/doc/', include('django.contrib.admindocs.urls')),
+    re_path(r'admin/', admin.site.urls),
+    re_path(r'accounts/', include('django.contrib.auth.urls')),
+    re_path(r'async_include/', include('async_include.urls', namespace="async_include")),
+    re_path(r'^', include('Gestionale.urls.urls')),
+    re_path(r'^', include('Analisis.urls.urls')),  # Urls per la gestione delle attività di routine
 
 
     # url(r'^jet/', include('jet.urls', 'jet')),  # Django JET URLS
