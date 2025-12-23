@@ -21,6 +21,15 @@ from django.db import models
 from django.utils.safestring import mark_safe
 from phonenumber_field.modelfields import PhoneNumberField
 
+from django.db import models
+
+from auditlog.models import AuditlogHistoryField
+from auditlog.registry import auditlog
+from Gestionale.modelli_dati.Localiz import *
+from Gestionale.modelli_dati.Restauro import *
+from Gestionale.modelli_dati.DatiAnalitici import *
+from Gestionale.modelli_dati.Giuridica import *
+
 MASK="000"
 THUMB_SIZE=(600, 600)
 
@@ -68,6 +77,9 @@ def write_roman(num):
 class Tags(models.Model):
     nome = models.TextField(unique=True, blank=False, null=False, serialize=True)
 
+    def __str__(self):
+        return self.nome
+
 class Autore(models.Model):
     """
     Autore è il modello che gestisce i dati degli autori ed è collegato con chiavi esterne al
@@ -109,9 +121,11 @@ class Autore(models.Model):
     titolo=models.CharField(max_length=20,choices=TITLES,blank=True) #Il titolo può essere vuoto
     cognome = models.CharField(max_length=60, default='', help_text='Family name')
     nome=models.CharField(max_length=60,default='',help_text='Name')
-    nascita = models.DateField(default='01/01/1900', blank=True, null=True, help_text='01/01/1988')
+
 
     #Dati di nascita della persona
+    nascita = models.DateField(blank=True, null=True, default='1900-01-01')
+    morte = models.DateField(blank=True, null=True)
     luogo_nascita=models.CharField(max_length=100,blank=False,default='')
     stato_nascita = models.CharField(max_length=100, blank=False,default='')
     genere=models.CharField(max_length=10,choices=GENERE,default='')
@@ -119,16 +133,18 @@ class Autore(models.Model):
     #Dati residenza autore
     indirizzo = models.CharField(max_length=100,default='')
     citta = models.CharField(max_length=100,default='')
-    provincia = models.CharField(max_length=60, default='')
+    provincia = models.CharField(max_length=60, default='', blank=True)
     stato = models.CharField(max_length=60,default='')
     zip_code=models.CharField(max_length=60,default='')
 
-    telefono = PhoneNumberField(default='', help_text='+393477093239 o 003321128832',blank=True, null=True)
-    mobile = PhoneNumberField(default='', help_text='+393477093239 o 003321128832', blank=True, null= True)
+    # Telefono di default se non presente ufficio cultura +390144770300
+    telefono = PhoneNumberField(default='+390144770300', help_text='+393477093239 o 003321128832', blank=True,
+                                null=True)
+    mobile = PhoneNumberField(default='+390144770300', help_text='+393477093239 o 003321128832', blank=True, null=True)
     mail = models.EmailField(max_length=100,default='',blank=True, null= True, unique=False)
     website = models.CharField(default='',max_length=100, help_text='sitoweb www', blank=True, null=True)
 
-    lingua = models.CharField(default='IT',choices=LINGUA, blank=False, null=False, max_length=60)
+    lingua = models.CharField(default='IT', choices=LINGUA, blank=True, null=False, max_length=60)
     imagefile = models.ImageField(db_column="imagefile", upload_to='pic_folder/autori', blank=True,help_text='immagine autore se presente')
 
     #history = HistoricalRecords()
@@ -173,7 +189,7 @@ class Autore(models.Model):
         Stringa base che appare nell'elenco dell voci ddei record della sezione admin
         :return:
         """
-        return str(self.cognome+" "+self.nome)
+        return "{} {}".format(self.cognome, self.nome)
 
     def image_(self):
         """
@@ -193,8 +209,8 @@ class Autore(models.Model):
         :param force_update:
         :return:
         """
-        self.cognome=self.cognome.capitalize().encode('utf-8')
-        self.nome = self.nome.capitalize().encode('utf-8')
+        self.cognome = "{}".format(self.cognome.capitalize())
+        self.nome = "{}".format(self.nome.capitalize())
         super(Autore, self).save(force_insert, force_update)
 
 
@@ -209,7 +225,8 @@ class Immagini(models.Model):
     datestamp = models.DateTimeField(auto_now_add=True)
 
     #Modello dati
-    titolo = models.ForeignKey('Opera', on_delete=models.DO_NOTHING, default='',blank=True,related_name="img_titolo_opera",null=True)
+    titolo = models.ForeignKey('Opera', on_delete=models.DO_NOTHING, blank=True, related_name="img_titolo_opera",
+                               null=True)
     commento=models.TextField(default="",help_text="breve commento all'opera o note", blank=True)
     imagefile = models.ImageField(db_column="imagefile",upload_to='pic_folder/opere', blank=True, default="logo_no_image.png")
     imagefile1 = models.ImageField(db_column="imagefile1", upload_to='pic_folder/opere/im1', blank=True)
@@ -221,6 +238,7 @@ class Immagini(models.Model):
 
     #history = HistoricalRecords()
     #Strutture accessorie
+
 
 
 
@@ -240,8 +258,9 @@ class Immagini(models.Model):
         if(self.titolo):
             # title = self.titolo.posizione_archivio + " - " + self.titolo.autore.cognome + " - " + self.titolo.titolo_opera + " / " + self.titolo.anno_realizzazione.__str__()
 
-            title=self.titolo.posizione_archivio + " - " + self.titolo.autore.cognome + " - / " + str(self.titolo.anno_realizzazione)
-            return str(title)
+            title = '-'.join(
+                [self.titolo.posizione_archivio, self.titolo.autore.cognome, str(self.titolo.anno_realizzazione)])
+            return title
             # self.titolo.titolo_opera
         else:
             return "RIFERIMENTO VUOTO"
@@ -339,52 +358,135 @@ class Immagini(models.Model):
         super(Immagini, self).save()
 
 
+tipologia_oper = (('Matrice', 'Matrice'), ('Stampa', 'Stampa'))
+
 class Opera(models.Model):
+    history = AuditlogHistoryField()
 
     #Modello dati
     #riferimento esterno
     #id=models.IntegerField(primary_key=True,auto_created=True,blank=None,editable=False)
-    autore=models.ForeignKey('Autore', on_delete=models.DO_NOTHING,related_name='autore',blank=True,)
-    titolo_opera = models.CharField(max_length=400, default='')
-    descrizione = models.TextField( default='',blank=True, null= True)
 
-    nazione = models.CharField(max_length=60, default='')
-    riconoscimenti = models.CharField(max_length=60, default='',blank=True, null= True)
+    '''OGGETTO'''
+    definizione = models.CharField(choices=tipologia_oper, max_length=10, default='')
+    identificazione = models.CharField(max_length=400, default='', blank=True, null=True,
+                                       help_text="Es. serie di incisioni 1/7...")
+    quantita = models.CharField(max_length=10, default='', blank=True, null=True, help_text="Numero di copie presenti")
 
-    #Dati opera
-    dimensione_lastra=models.CharField(max_length=25, default='')
-    dimensione_lastra_y = models.IntegerField(default=0, help_text="dimensione in mm")
-    dimensione_lastra_x = models.IntegerField(default=0, help_text="dimensione in mm")
-    dimensione_foglio_y = models.IntegerField(default=0, help_text="dimensione in mm")
-    dimensione_foglio_x = models.IntegerField(default=0, help_text="dimensione in mm")
+    identificazione_opera = models.TextField(max_length=400, default='', blank=True, null=True)
+    titolo_opera = models.CharField(max_length=400, default='', blank=True, null=True)
+    # Parole chiave
+    tags_s = models.ManyToManyField('Tags', related_name='tag_s', blank=True, null=True,
+                                    help_text='Parole chiave che identificano il contenuto dell\'opera')
 
-    #numero_lastre = models.IntegerField(default=0, help_text="")
-    tecnica = models.CharField(max_length=500, default='')
+    '''LOCALIZZAZIONE'''
+    localizzazione = models.ForeignKey(LocalizzazioneSpecifica, on_delete=models.DO_NOTHING,
+                                       related_name='Localizzazione', blank=True, null=True,
+                                       help_text="Collocazione specifica")
 
-    anno_realizzazione = models.IntegerField(default=datetime.datetime.now().year)
-
+    '''CRONOLOGIA'''
     # Permette la scelta solo negli ultimi due anni
     anni=[a for a in range(1993,datetime.date.today().year+2)[::2]]
-    EDIZIONI = [(str(write_roman(int((a-1993)/2)+1)+' Biennale - '+str(a)),str(write_roman(int((a-1993)/2)+1)+'- Biennale -'+str(a))) for a in anni]
+    EDIZIONI = [(str(write_roman(int((a - 1993) / 2) + 1) + ' Biennale - ' + str(a)),
+                 str(write_roman(int((a - 1993) / 2) + 1) + ' Biennale - ' + str(a))) for a in anni]
     EDIZIONI= EDIZIONI[::-1] #reverse array
     EDIZIONI.append(("DA CANCELLARE",'DA CANCELLARE'))
     EDIZIONI.append(("NON IN CONCORSO",'NON IN CONCORSO'))
 
     #YEARS=[(r,r) for r in range(datetime.datetime.now().year-1,datetime.datetime.now().year+1)]
     #anno_presentazione = models.IntegerField( choices=YEARS, default=datetime.datetime.now().year)
-    edizione = models.TextField(max_length=60, choices=EDIZIONI, default=EDIZIONI[0][0], blank=True)
+    edizione = models.TextField(max_length=60, choices=EDIZIONI, default=EDIZIONI[0][0], blank=True,
+                                help_text="Edizione nella quale ha partecipato l'opera")
+    anno_realizzazione = models.IntegerField(default=datetime.datetime.now().year, blank=True,
+                                             help_text="Anno di creazione dell'opera")
+
+    '''DEFINIZIONE CULTURALE'''
+    autore = models.ForeignKey('Autore', on_delete=models.DO_NOTHING, related_name='autore', blank=True,
+                               help_text="Indicazione dei dati anagrafici dell'autore. Se l'autore è presente in anagrafica fare una ricerca cliccando sulla prima lente di ingrandimento")
+    motivazione_attribuzione = models.CharField(max_length=100, default='', blank=True, null=True)
+
+    '''LASTRA'''
+    materia_lastra = models.CharField(max_length=100, default='', blank=True, null=True)
+    tecnica_lastra = models.CharField(max_length=100, default='', blank=True, null=True)
+    dimensione_lastra_y = models.IntegerField(default=0, blank=True, null=True, help_text="dimensione in mm")
+    dimensione_lastra_x = models.IntegerField(default=0, blank=True, null=True, help_text="dimensione in mm")
+    spessore_lastra = models.CharField(max_length=10, default='', blank=True, null=True, help_text="dimensione in mm")
+    formato_lastra = models.CharField(max_length=10, default='', blank=True, null=True, help_text="")
+    numero_lastre = models.IntegerField(default=0, help_text="", blank=True, null=True)
+
+    dimensione_lastra = models.CharField(max_length=500, default='', blank=True, null=True,
+                                         help_text='non utilizzare - uso interno progrmma')
+
+    '''FOGLIO'''
+    materia_foglio = models.CharField(max_length=100, default='', blank=True, null=True)
+    tecnica_foglio = models.CharField(max_length=100, default='', blank=True, null=True)
+    dimensione_foglio_y = models.IntegerField(default=0, help_text="dimensione in mm")
+    dimensione_foglio_x = models.IntegerField(default=0, help_text="dimensione in mm")
+    spessore_foglio = models.CharField(max_length=10, default='', blank=True, null=True, help_text="dimensione in mm")
+    formato_foglio = models.CharField(max_length=10, default='', blank=True, null=True, help_text="A4, 70x100...")
+
+    tecnica = models.CharField(max_length=500, default='', blank=True, null=True,
+                               help_text='non utilizzare - uso interno progrmma')
+
+    '''CONSERVAZIONE'''
+    stato_conservazione = models.CharField(max_length=100, default='', blank=True, null=True,
+                                           help_text='Indicazione sintetica sullo stato di conservazione e se presenti parti rovinate')
+    indicazioni_conservazione = models.TextField(max_length=400, default='', blank=True, null=True,
+                                                 help_text='Indicaizoni specifiche degli enentuali danni o parti rovinate nel dettaglio')
+
+    '''RESTAURO'''
+    restauro = models.ForeignKey(Restauro, on_delete=models.DO_NOTHING, related_name='Restauro', blank=True, null=True,
+                                 help_text="Se presente rastauro")
+    situazione_restauro = models.CharField(max_length=300, default='', blank=True, null=True,
+                                           help_text='Stato dell\'opera al momento del restauro')
+
+    '''DATI ANALITICI'''
+    descrizione = models.TextField(default='', blank=True, null=True, help_text='Descrivi l\'incisione con ordine')
+    dati_analitici = models.ForeignKey(DatiAnalitici, on_delete=models.DO_NOTHING, related_name='DatiAnalitici',
+                                       blank=True, null=True,
+                                       help_text="Dati analaitici per la descrizione dell\'opera")
+    nazione = models.CharField(max_length=60, default='', blank=True, null=True,
+                               help_text='Nazione provenienza opera, che potrebbe essere differente')
+
+    '''NOTIZIE STORICO-CRITICHE-BIBLIOGRAFICHE'''
+    notizie = models.TextField(default='', blank=True, null=True, help_text='Notizie storico-critiche-biogrfiche')
+    riconoscimenti = models.CharField(max_length=60, default='', blank=True, null=True)
+
+    '''GIURIDICA'''
+
+    condizione_giuridica = models.ForeignKey(Giuridica, on_delete=models.DO_NOTHING, related_name='Giuridica',
+                                             blank=True, null=True, help_text="Se presente vincolo o tutela")
+
+    '''BIBLIOGRAFIA'''
+    bibliografia = models.TextField(default='', blank=True, null=True,
+                                    help_text='Indicaizoni di eventuali bibliograifie 1 per riga (Autore | Titolo | Anno edizione |pp. nn. figg. | Autore / AA.VV')
+    mostre = models.TextField(default='', blank=True, null=True,
+                              help_text='Indicaizoni di eventuali mostre 1 per riga (Luogo | Titolo | Data')
+
+    '''COMPILAZIONE'''
+    data_compilazione = models.DateField(blank=True, null=True)
+    nome_compilatore = models.CharField(max_length=60, default='', blank=True, null=True, help_text='Cognome Nome')
+    funzionario_responsabile = models.CharField(max_length=60, default='', blank=True, null=True,
+                                                help_text='Cognome Nome')
+    data_ultimo_aggiornamento = models.DateField(blank=True, null=True)
+    nome_revisore = models.CharField(max_length=60, default='', blank=True, null=True, help_text='Cognome Nome')
+
+
 
 
     #commento_opera = models.TextField(default="", help_text="breve commento all'opera o note",blank=True)
-    note = models.TextField(max_length=500, default='',blank=True)
-    posizione_archivio = models.CharField(max_length=60, default='')
+    note = models.TextField(max_length=500, default='Osservazioni e annotazioni ulteriori')
+    posizione_archivio = models.CharField(max_length=60, default='', blank=True, null=True,
+                                          help_text='Codifica opere edizioni in coso, posizioni temporanee')
 
 
     #Non è obbligatorio avere l'immagine da collegare
     immagini=models.ForeignKey(Immagini,on_delete=models.CASCADE,default='',blank=True, null=True)
-    tag=models.TextField(max_length=200,default='', help_text="inserire i tag separati da una virgola")
+    tag = models.TextField(max_length=200, default='',
+                           help_text="Da utilizzare per caricamento massivo di tag (devono essere in formato CSV)",
+                           blank=True)
 
-    # tags_s=models.ForeignKey('Tags',on_delete=models.DO_NOTHING,related_name='tag_s',blank=False,null=True)
+
 
 
     #history = HistoricalRecords()
@@ -403,28 +505,31 @@ class Opera(models.Model):
     #nome del record collegato alla vista del modello
     def __str__(self):
         # return self.posizione_archivio+" - "+self.autore.cognome+" - "+self.titolo_opera+" / "+self.anno_realizzazione.__str__()
-        title = self.posizione_archivio + " - " + self.autore.cognome + " - / " + self.anno_realizzazione.__str__()
-        return str(title.encode('utf-8'))
+        title = ' | '.join([self.titolo_opera, self.autore.cognome, self.anno_realizzazione.__str__()])
+        return title
 
     def indicazione_(self):
         return self.titolo_opera + " / " + self.anno_realizzazione.__str__()
     indicazione_.allow_tag=True
 
     def abstract_(self):
-        abst="tecnica:"+self.tecnica + " | anno:" + self.anno_realizzazione.__str__()+' | misure lastra:'
+        # abst="tecnica:"+self.tecnica + " | anno:" + self.anno_realizzazione.__str__()+' | misure lastra:'
+        #
+        # if self.dimensione_lastra:
+        #     abst+=self.dimensione_lastra
+        # else:
+        #     abst+=self.dimensione_lastra_x.__str__()+"X"+self.dimensione_lastra_y.__str__()+ \
+        #        " / "+self.dimensione_foglio_x.__str__()+"X"+self.dimensione_foglio_y.__str__()
 
-        if self.dimensione_lastra:
-            abst+=self.dimensione_lastra
-        else:
-            abst+=self.dimensione_lastra_x.__str__()+"X"+self.dimensione_lastra_y.__str__()+ \
-               " / "+self.dimensione_foglio_x.__str__()+"X"+self.dimensione_foglio_y.__str__()
-
-        return abst
+        return ""
+        # return abst
 
     abstract_.allow_tag = True
 
     def pos_arch(self):
-        return str(MASK[0:len(MASK)-len(self.posizione_archivio)]+self.posizione_archivio)
+        fields = [str(MASK), "NULL" if self.posizione_archivio != None else str(self.posizione_archivio)]
+        # return str(MASK[0:len(MASK)]-len(self.posizione_archivio)]+self.posizione_archivio)
+        return '-'.join(fields)
 
     def save_low(self, force_insert=False, force_update=False):
         self.titolo_opera = self.titolo_opera.capitalize().encode('utf-8')
@@ -440,7 +545,4 @@ class Opera(models.Model):
         verbose_name_plural = "Opere"
 
 
-
-
-
-
+auditlog.register(Opera)

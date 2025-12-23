@@ -11,9 +11,9 @@
         <tr class="text-uppercase">
             {#            DEBUG: Immagine autore#}
             {#            <th></th>#}
-            <th></th>
-            <th>Nome</th>
+            {#            <th></th>#}
             <th>Cognome</th>
+            <th>Nome</th>
             <th><i class="icofont-calendar"></i> Data nascita</th>
             <th><i class="icofont-calendar"></i> Luogo nascita</th>
             <th><i class="icofont-calendar"></i> Stato nascita</th>
@@ -34,9 +34,9 @@
                 {#                        <img src="/media/logo_no_image.png" style="width:90%;height:auto; margin-top:20%">#}
                 {#                    {% endif %}</td>#}
 
-                <td class="w-auto align-center ">
+                {#                <td class="w-auto align-center ">#}
                     {#                    <i class="icofont-{{ entr.genere }}" style="font-size: 2em"></i> #}
-                    {{ entr.titolo }}</td>
+                {#                    {{ entr.titolo }}</td>#}
                 <td class="w-auto align-center text-uppercase"> {{ entr.cognome | capfirst }}
                 </td>
                 <td class="w-auto align-center text-uppercase">{{ entr.nome | capfirst }} </td>
@@ -47,9 +47,8 @@
                 </td>
 
                 <td class="w-auto  text-wrap">
-                    <stron>Indirizzo:</stron>
                     {{ entr.indirizzo |lower |capfirst }}
-                    <br><strong>Città: </strong>{{ entr.citta |lower |capfirst }} {{ entr.stato_provincia |lower |capfirst }}
+                    <br><strong>{{ entr.citta |lower |capfirst }} {{ entr.stato_provincia |lower |capfirst }}</strong>
                     {% if entr.zip %}
                         <br><strong>Zip/Cap: </strong>{{ entr.zip }}
                     {% endif %}
@@ -58,15 +57,15 @@
                 </td>
                 <td class="w-auto">
 
-                    {% if entr.telefono != None %}
-                        <p class="text-info"><i class="icofont-phone"></i> {{ entr.telefono }}</p>
+                    {% if entr.telefono != None and  entr.telefono != "" %}
+                        <span class="text-info"><i class="icofont-phone"></i> {{ entr.telefono }}</span><br>
                     {% else %}
-                        <p class="text-danger">no telefono</p>
+                        {#                        <p class="text-danger">no telefono</p>#}
                     {% endif %}
                     {% if entr.mail != None %}
-                        <p class="text-info"><i class="icofont-ui-email"></i> {{ entr.mail | lower }}</p>
+                        <span class="text-info"><i class="icofont-ui-email"></i> {{ entr.mail | lower }}</span>
                     {% else %}
-                        <p class="text-danger">no mail</p>
+                        {#                        <p class="text-danger">no mail</p>#}
                     {% endif %}
                 </td>
                 <td class="w-auto">

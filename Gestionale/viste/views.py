@@ -25,8 +25,14 @@ def handler500(request, *args, **argv):
 
 @login_required
 def export_data_autori(request):
-    entry = Autore.objects.all().order_by('cognome').distinct()
-    return render(request, 'pages/mainautori.html', context={"export_record":entry, "elementi":entry.count()})
+    #    entry = Autore.objects.all().order_by('cognome').distinct()
+    query = 'SELECT DISTINCT * FROM main.Gestionale_autore group by cognome '
+    entry = Autore.objects.raw(query)
+
+    query_co = 'SELECT DISTINCT stato, count(stato) FROM main.Gestionale_autore '
+    entry_co = Autore.objects.raw(query_co)
+
+    return render(request, 'pages/mainautori.html', context={"export_record": entry, "elementi": entry_co})
 
 @login_required
 def export_data_opere(request):
@@ -55,7 +61,8 @@ def opere_list_full(request):
 @login_required
 def opere_list_full_last(request):
     print(Opera.EDIZIONI[0][1])
-    edizione = 'XVI- Biennale -2023'
+    edizione = 'XVI Biennale - 2023'
+    # edizione=Opera.EDIZIONI[1][1]
     entry = Opera.objects.all().filter(edizione=edizione).order_by('posizione_archivio')
     return render(request, 'opere_lista_completa.html', context={"id":id, "entries":entry})
 

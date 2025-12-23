@@ -107,14 +107,14 @@
                                 {% endif %}" data-price="{{ entry.posizione_archivio }}">
                 <h2 class="opera">
                     <div class="row impaginazione">
-                        <div class="col-md-4">
+                        <div class="col-4">
                             <h4 style="text-transform: uppercase"><small>Opera:</small><br>
                                 {{ entry.titolo_opera }}</h4></div>
-                        <div class="col-md-4">
+                        <div class="col-4">
                             <h4 style="text-transform: uppercase"><small>Autore:</small><br>
                                 {{ entry.autore.nome }} {{ entry.autore.cognome }}
                             </h4></div>
-                        <div class="col-md-4 intestazionepos">
+                        <div class="col-4 intestazionepos">
 
                             <div class="row ">
                                 <div class="col-md-8">
@@ -125,10 +125,10 @@
                                 </div>
                             </div>
                             <div class="row">
-                                <div class="col-md-8">
+                                <div class="col-8">
                                     <p style="font-size: medium">{{ entry.edizione }}</p>
                                 </div>
-                                <div class="col-md-4">
+                                <div class="col-4">
                                     {{ entry.posizione_archivio }}
                                 </div>
 
@@ -140,7 +140,7 @@
 
                 <div class="row impaginazione row-eq-height">
 
-                    <div class="col-md-3">
+                    <div class="col-3">
 
                         {% if entry.immagini.preview %}
                             <a href="/media/{{ entry.immagini.imagefile }}"><img
@@ -152,7 +152,7 @@
 
                         {% endif %}
                     </div>
-                    <div class="col-md-9">
+                    <div class="col-9">
                         <table class="impaginazione" style="width: 100%; font-variant: small-caps">
                             <colgroup>
                                 <col width="30%">
@@ -212,7 +212,7 @@
 
                 </div>
                 <div class="row">
-                    <div class="col-md-12">
+                    <div class="col-12">
                         <table class="impaginazione" style="width: 100%; font-variant: small-caps">
                             <tr>
                                 <td class="pr-3 mr-3"><strong>Descrizione:</strong></td>

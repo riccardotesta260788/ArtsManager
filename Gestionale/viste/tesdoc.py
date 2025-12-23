@@ -19,8 +19,8 @@ def document(request):
     # reading images from url is not supported
 
     print(Opera.EDIZIONI[0][1])
-    entry = Opera.objects.all().filter(edizione=Opera.EDIZIONI[1][0]).order_by('posizione_archivio')
-
+    # entry = Opera.objects.all().filter(edizione=Opera.EDIZIONI[1][0]).order_by('posizione_archivio')
+    entry = Opera.objects.all().filter(edizione='XVI- Biennale -2023').order_by('posizione_archivio')
     imagen = InlineImage(doc, entry[0].immagini.preview, width=Mm(20))  # width is in millimetres
 
     context = {'i': str.join(',', [f.name for f in Opera._meta.get_fields()])}

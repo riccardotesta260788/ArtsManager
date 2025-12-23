@@ -28,14 +28,7 @@ base_path='/home/acqui/'
 remotefold_images="immagini/"
 remotefold_database="DB/"
 
-#credenziali per l'accesso FTP
-# rl = {
-#     'host': 'xxxx',
-#     'password': 'xxx',
-#     'username': 'xxx',
-#     'port': xx,
-# }
-
+# credenziali per l'accesso FTP in file config.py
 rl = config.rl
 
 

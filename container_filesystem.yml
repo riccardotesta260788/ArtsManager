@@ -1,0 +1,6 @@
+version: '2.4'
+services:
+  biennale:
+    volumes:
+      - "/Users/riccardotesta_1/progetti-sviluppo-codice/Biennale/App:/biennale"
+      - "/Users/riccardotesta_1/progetti-sviluppo-codice/Biennale/Media:/biennale/media"

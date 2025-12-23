@@ -1,0 +1,35 @@
+services:
+  db:
+    image: mysql:8.0
+    container_name: mysql_db
+    restart: always
+    environment:
+      MYSQL_DATABASE: django_db
+      MYSQL_USER: django_user
+      MYSQL_PASSWORD: django_password
+      MYSQL_ROOT_PASSWORD: root_password
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+
+  biennale:
+    tty: true
+    container_name: biennale
+    build:
+      context: .
+      dockerfile: Dockerfile
+    env_file:
+      - local.env
+    environment:
+      - MYSQL_HOST=mysql
+    depends_on:
+      - db
+    network_mode: bridge
+    ports:
+      - 8080:8080
+    volumes:
+      - .:/app
+
+volumes:
+  mysql_data:

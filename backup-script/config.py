@@ -1,3 +1,4 @@
+# File configuration for conenction
 rl = {
     'host': 'ftp.titansolution.it',
     'password': 'Riki1988',
